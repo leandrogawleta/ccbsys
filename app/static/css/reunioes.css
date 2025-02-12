@@ -1,0 +1,95 @@
+/* ==========================
+   ESTILIZAÇÃO DA TABELA DE REUNIÕES
+   ========================== */
+
+/* Ajuste da altura da linha para ficar mais compacta */
+.table th, .table td {
+    padding: 6px 10px; /* Reduz o espaçamento interno */
+    font-size: 14px; /* Mantém um tamanho de fonte legível */
+    text-align: center;
+}
+
+/* Cabeçalho com tom de cinza claro */
+.table thead {
+    background-color: #f2f2f2; /* Cinza claro */
+    color: #333;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+/* Ajuste do cabeçalho */
+.table th {
+    padding: 8px 12px; /* Reduz um pouco o espaço interno */
+    border-bottom: 2px solid #ddd;
+}
+
+/* Estilização das linhas */
+.table tbody tr {
+    background: #ffffff;
+    transition: background 0.2s ease-in-out;
+}
+
+/* Linhas alternadas */
+.table tbody tr:nth-child(even) {
+    background: #f9f9f9;
+}
+
+/* Hover na linha */
+.table tbody tr:hover {
+    background: #e2e6ea;
+}
+
+/* Bordas arredondadas na primeira e última célula da linha */
+.table tbody tr td:first-child {
+    border-radius: 5px 0 0 5px;
+}
+.table tbody tr td:last-child {
+    border-radius: 0 5px 5px 0;
+}
+
+/* Ajuste para responsividade */
+@media (max-width: 768px) {
+    .table thead {
+        display: none;
+    }
+
+    .table, .table tbody, .table tr, .table td {
+        display: block;
+        width: 100%;
+    }
+
+    .table tr {
+        margin-bottom: 5px;
+        border-radius: 5px;
+    }
+
+    .table td {
+        text-align: right;
+        padding-left: 50%;
+        position: relative;
+    }
+
+    .table td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 15px;
+        font-weight: bold;
+        text-transform: uppercase;
+    }
+}
+
+/* Garante que a data seja exibida como texto e não formatada automaticamente */
+.data-formatada {
+    font-family: inherit !important;
+    white-space: nowrap;
+}
+
+
+
+
+
+
+
+
+
+

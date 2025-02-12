@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/outras_reunioes.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <title>Outras Reuniões</title>
+</head>
+<body>
+    <div class="d-flex">
+        <!-- Menu Lateral -->
+        <nav class="sidebar">
+            <div class="logo text-center mb-4">
+                <img src="/static/logo.png" alt="Logo" class="img-fluid" style="max-width: 150px;">
+            </div>
+            <ul class="nav flex-column">
+                <li class="nav-item mb-3">
+                    <a href="/lista_batismo" class="nav-link">
+                        <i class="bi bi-arrow-left-circle me-2"></i> Voltar
+                    </a>
+                </li>                
+                <li class="nav-item mb-3">
+                    <a href="#" class="nav-link active" data-bs-toggle="modal" data-bs-target="#modalOutrasReunioes">
+                        <i class="bi bi-people-fill me-2"></i> Registrar Outras Reuniões
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Conteúdo Principal -->
+        <div class="content-wrapper flex-grow-1 p-3">
+            <!-- Cabeçalho -->
+            <header class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="page-title">Outras Reuniões</h1>
+                <a href="/logout" class="btn btn-danger btn-sm">
+                    <i class="bi bi-box-arrow-right"></i>
+                </a>
+            </header>
+
+            <!-- Filtros -->
+            <section class="filters mb-4">
+                <div class="d-flex gap-2">
+                    <input type="text" id="filtroNome" class="form-control form-control-sm" placeholder="Pesquisar por local, tipo ou atendimento">
+                    <button class="btn btn-primary btn-sm" onclick="aplicarFiltro()">Filtrar</button>
+                </div>
+            </section>
+
+            <!-- Tabela de Registros -->
+            <div class="table-responsive mb-4">
+                <table class="table table-striped table-hover" id="outrasReunioesTable">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Data</th>
+                            <th>Hora</th>
+                            <th>Local</th>
+                            <th>Atendimento</th>
+                            <th>Tipo</th>
+                            <th>Observações</th>
+                            <th class="text-center">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Registros serão preenchidos dinamicamente -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Outras Reuniões -->
+    <div class="modal fade" id="modalOutrasReunioes" tabindex="-1" aria-labelledby="modalOutrasReunioesLabel" aria-hidden="true">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <form id="formOutrasReunioes">
+                    <div class="modal-header bg-primary text-white">
+                        <h6 class="modal-title" id="modalOutrasReunioesLabel">Cadastrar Outras Reuniões</h6>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="reuniaoId" name="id">
+    
+                        <div class="mb-3">
+                            <label for="data" class="form-label">Data</label>
+                            <input type="text" class="form-control form-control-sm" id="data" name="data" placeholder="dd/mm/yyyy" required>
+                        </div>
+                        
+    
+                        <div class="mb-3">
+                            <label for="hora" class="form-label">Hora</label>
+                            <input type="time" class="form-control form-control-sm" id="hora" name="hora" required>
+                        </div>
+    
+                        <div class="mb-3">
+                            <label for="local" class="form-label">Local</label>
+                            <input type="text" class="form-control form-control-sm" id="local" name="local" placeholder="Informe o local" required>
+                        </div>
+    
+                        <div class="mb-3">
+                            <label for="atendimento" class="form-label">Atendimento</label>
+                            <input type="text" class="form-control form-control-sm" id="atendimento" name="atendimento" placeholder="Informe quem atende">
+                        </div>
+    
+                        <div class="mb-3">
+                            <label for="tipo" class="form-label">Tipo</label>
+                            <select class="form-select form-select-sm" id="tipo" name="tipo" required>
+                                <!-- Opções preenchidas dinamicamente -->
+                            </select>
+                        </div>
+    
+                        <div class="mb-3">
+                            <label for="obs" class="form-label">Observações</label>
+                            <textarea class="form-control form-control-sm" id="obs" name="obs" placeholder="Adicione observações" rows="3"></textarea>
+                        </div>
+                    </div>
+    
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success btn-sm">Salvar</button>
+                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Fechar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+
+    <!-- Scripts -->
+    <script src="/static/js/outras_reunioes.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            flatpickr("#data", {
+                dateFormat: "d/m/Y",
+                locale: "pt",
+                enableTime: false
+            });
+        });
+    </script>
+    
+</body>
+</html>

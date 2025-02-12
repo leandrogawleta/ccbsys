@@ -1,0 +1,156 @@
+/* Estilo geral da página */
+body {
+    background-color: #f8f9fa;
+    font-family: 'Arial', sans-serif;
+}
+
+/* Menu lateral */
+.sidebar {
+    height: 100vh;
+    width: 220px;
+    background-color: #e9ecef;
+    color: #212529;
+    padding: 20px 10px;
+    border-right: 1px solid #ced4da;
+}
+
+.sidebar .logo img {
+    max-width: 180px;
+    margin-bottom: 20px;
+}
+
+.sidebar a {
+    color: #212529;
+    text-decoration: none;
+    padding: 10px 15px;
+    display: flex;
+    align-items: center;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    font-size: 0.9rem;
+}
+
+.sidebar a:hover,
+.sidebar a.active {
+    background-color: #ced4da;
+}
+
+.sidebar a i {
+    font-size: 1.2rem;
+    margin-right: 10px;
+}
+
+/* Conteúdo principal */
+.content-wrapper {
+    flex-grow: 1;
+    padding: 20px;
+    background-color: #ffffff;
+    margin: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+}
+
+.page-title {
+    font-size: 24px;
+    color: #343a40;
+    margin-bottom: 10px;
+}
+
+.filters {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+#filtroNome {
+    flex-grow: 1;
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+/* Tabela */
+.table-responsive {
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 10px;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.05);
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 0;
+}
+
+.table th, .table td {
+    padding: 10px;
+    text-align: center;
+    border: 1px solid #ddd;
+}
+
+.table thead th {
+    background-color: #007bff;
+    color: #ffffff;
+    font-size: 14px;
+}
+
+.table tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+/* Botões de ações */
+.table .btn-sm {
+    padding: 5px 8px;
+    font-size: 12px;
+}
+
+/* Modal */
+.modal-content {
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.modal-header {
+    background-color: #007bff;
+    color: #ffffff;
+    border-bottom: none;
+    border-radius: 8px 8px 0 0;
+}
+
+.modal-footer {
+    border-top: none;
+    padding: 10px;
+}
+
+.modal-footer .btn {
+    padding: 8px 12px;
+}
+
+/* Rodapé */
+.footer {
+    text-align: center;
+    padding: 10px;
+    background-color: #f1f1f1;
+    border-top: 1px solid #ddd;
+    margin-top: 20px;
+    border-radius: 8px;
+    color: #6c757d;
+    font-size: 14px;
+}
+
+/* Ajustes responsivos */
+@media (max-width: 768px) {
+    .content-wrapper {
+        margin: 10px;
+        padding: 15px;
+    }
+
+    .filters {
+        flex-direction: column;
+    }
+
+    .table-responsive {
+        padding: 5px;
+    }
+}

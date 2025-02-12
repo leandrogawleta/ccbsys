@@ -1,0 +1,96 @@
+/* Estilo Geral */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f8f9fa;
+    margin: 0;
+}
+
+/* Menu Lateral */
+.sidebar {
+    height: 100vh;
+    width: 220px;
+    background-color: #e9ecef;
+    padding: 20px 10px;
+}
+
+.sidebar .logo img {
+    max-width: 150px;
+}
+
+.sidebar a {
+    color: #212529;
+    text-decoration: none;
+    padding: 10px 15px;
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
+
+.sidebar a:hover,
+.sidebar a.active {
+    background-color: #ced4da;
+}
+
+/* Conteúdo Principal */
+.content-wrapper {
+    flex-grow: 1;
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 20px;
+}
+
+.page-title {
+    font-size: 24px;
+    color: #495057;
+}
+
+/* Tabela de Registros */
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.table thead th {
+    background: linear-gradient(135deg, #f4f5f7, #f4f4f7);
+    color: #111111;
+    text-align: center;
+    padding: 8px 6px;
+    font-size: 10px;
+    text-transform: uppercase;
+    border-bottom: 2px solid #3d3e3f;
+}
+
+.table thead th:first-child {
+    border-top-left-radius: 8px;
+}
+
+.table thead th:last-child {
+    border-top-right-radius: 8px;
+}
+
+/* Linhas do Corpo da Tabela */
+.table tbody td {
+    text-align: center;
+    padding: 10px 8px;
+    font-size: 14px;
+    color: #343a40;
+}
+
+.table tbody tr:hover {
+    background-color: #f1f3f5;
+}
+
+/* Botões de Ação */
+.table .btn {
+    font-size: 12px;
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+
+

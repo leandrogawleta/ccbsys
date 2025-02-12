@@ -1,0 +1,58 @@
+2. Navegue até o diretório do projeto
+No terminal, vá até a pasta C:\CCBSys com o comando:
+
+bash
+Copiar código
+cd C:\CCBSys
+3. Crie e ative um ambiente virtual
+Crie um ambiente virtual para isolar as dependências do projeto:
+
+bash
+Copiar código
+python -m venv venv
+Ative o ambiente virtual:
+
+No Windows:
+bash
+Copiar código
+venv\Scripts\activate
+Você verá algo como (venv) no início da linha do terminal indicando que o ambiente virtual está ativo.
+
+Atualize o pip
+python -m pip install --upgrade pip
+
+
+4. Instale as dependências
+Certifique-se de que o arquivo requirements.txt contém as seguintes linhas:
+
+text
+Copiar código
+flask
+flask-sqlalchemy
+Instale as dependências com o comando:
+
+bash
+Copiar código
+pip install -r requirements.txt
+5. Inicie o servidor Flask
+Execute o script run.py para iniciar o servidor:
+
+bash
+Copiar código
+python run.py
+Se tudo estiver correto, você verá uma mensagem parecida com esta:
+
+plaintext
+Copiar código
+ * Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)
+6. Acesse o sistema no navegador
+Abra o navegador e acesse:
+
+arduino
+Copiar código
+http://127.0.0.1:5000/
+Você verá a página de login do sistema. Faça login com as credenciais fictícias configuradas (admin/admin).
+
+# Instale a biblioteca Pandas no ambiente do Flask para manipular Excel
+# pip install pandas openpyxl
+

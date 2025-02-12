@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/css/calendario.css">
+    
+    <title>Calendário Anual de Reuniões</title>
+</head>
+<body>
+    <div class="container">
+        <!-- Cabeçalho com logo e título -->
+        <div class="header-container no-print">
+            <img src="/static/logo.png" alt="Logo" class="logo">
+            <div class="title">
+                <h1>Calendário Anual de Reuniões Ministeriais e Administrativas</h1>
+                <h2>Araucária, Contenda e Lapa - PR</h2>
+            </div>
+        </div>
+
+        <hr class="no-print">
+
+        <!-- Botão Imprimir -->
+        <button class="btn btn-primary" onclick="abrirImpressao()">
+            <i class="bi bi-printer"></i> Imprimir
+        </button>              
+        
+
+        <!-- Exibição do calendário e tabela de reuniões por mês -->
+        {% for mes in meses %}
+        <div class="mes-container">
+            <h3>{{ mes.nome }} {{ ano }}</h3>
+
+            <!-- Calendário do Mês -->
+            <table border="1" class="calendar">
+                <thead>
+                    <tr>
+                        <th>Dom</th>
+                        <th>Seg</th>
+                        <th>Ter</th>
+                        <th>Qua</th>
+                        <th>Qui</th>
+                        <th>Sex</th>
+                        <th>Sáb</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for semana in mes.semanas %}
+                    <tr>
+                        {% for dia in semana %}
+                        <td>{{ dia|safe }}</td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <!-- Tabela de Reuniões do Mês -->
+            <table border="1" class="meetings">
+                <thead>
+                    <tr>
+                        <th class="text-center">Dia</th>
+                        <th class="text-center">Hora</th>
+                        <th>Natureza</th>
+                        <th class="text-center">Local</th>
+                        <th class="text-center">Atendimento</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for reuniao in mes.reunioes %}
+                    <tr>
+                        <td class="text-center">{{ reuniao.dia }}</td>
+                        <td class="text-center">{{ reuniao.hora }}</td>
+                        <td>{{ reuniao.natureza }}</td>
+                        <td class="text-center">{{ reuniao.local }}</td>
+                        <td class="text-center">{{ reuniao.atendimento }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endfor %}
+
+    </div>
+
+    <script src="/static/js/print.js"></script>
+</body>
+</html>
+
+
