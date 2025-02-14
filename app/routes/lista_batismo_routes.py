@@ -44,7 +44,7 @@ def listar_batismos_page():
         ministerial = consulta_registros("Reunião Ministerial")
         outras_reunioes = get_outras_reunioes()
 
-        # 🔹 Buscar registros de RSDItem onde `lb = 'Sim'`
+        # 🔹 Buscar registros de RSDItem onde lb = 'Sim'
         registros_rsd = RSDItem.query.filter(RSDItem.lb == 'Sim').order_by(RSDItem.data, RSDItem.hora).all()
 
         # 🔹 Criar conjunto para evitar duplicação na lista final
@@ -64,7 +64,7 @@ def listar_batismos_page():
                 registro_formatado = {
                     "data": formatar_data(registro.data),
                     "hora": formatar_hora(registro.hora),
-                    "natureza": registro.tipo,
+                    "natureza": registro.descricao,
                     "local": registro.igreja,
                     "atendimento": registro.atendimento
                 }
@@ -76,7 +76,7 @@ def listar_batismos_page():
                     ensaios.append(registro_formatado)
                 elif registro.tipo == "Reunião da Mocidade":
                     mocidade.append(registro_formatado)
-                elif registro.tipo == "Reuniões Ministeriais":
+                elif registro.tipo == "Reunião Ministerial":
                     ministerial.append(registro_formatado)
                 else:
                     outras_reunioes.append(registro_formatado)
@@ -126,12 +126,12 @@ def filtrar_registros():
             registros_rsd = db.session.query(
                 RSDItem.data,
                 RSDItem.hora,
-                RSDItem.tipo.label("natureza"),
+                RSDItem.descricao.label("natureza"),  # Agora carrega "descricao"
                 RSDItem.igreja.label("local"),
                 RSDItem.atendimento
             ).filter(
                 RSDItem.tipo == tipo,
-                RSDItem.lb == 'Sim',  # 🔹 Somente registros com lb = 'Sim'
+                RSDItem.lb == 'Sim',
                 RSDItem.data.between(data_inicio, data_fim)
             ).order_by(RSDItem.data, RSDItem.hora).all()
 
@@ -257,8 +257,4 @@ def get_outras_reunioes():
     except Exception as e:
         current_app.logger.error(f"Erro ao consultar Outras Reuniões: {e}")
         return []
-
-
-
-
 

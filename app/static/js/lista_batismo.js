@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Função para converter string de data (dd/mm/yyyy) para objeto Date
     function converterData(dataString) {
         const [dia, mes, ano] = dataString.split('/');
-        return new Date(`${ano}-${mes}-${dia}`);
+        return new Date(ano, mes - 1, dia); // Meses no JavaScript começam do índice 0
     }
 
     // Função para formatar data de yyyy-mm-dd para dd/mm/yyyy
@@ -90,14 +90,12 @@ document.addEventListener('DOMContentLoaded', function () {
         formats: ['size', 'bold', 'italic', 'underline', 'align', 'list']
     };
 
-    
     // Texto padrão para os editores
     const textosPadrao = {
-        coletas: `Coleta única: Piedade, Construção e Diversos`,
-        tss: `Araucária - Central: Todos os Sábados<br>Araucária - Thomaz Coelho: Todos os domingos<br>Araucária - Jardim Iguaçu: Todos os domingos`,
-        avisos: `Araucária - Central: cultos todas as quintas-feiras - 14:00<br>Curitiba - Portão: cultos todas as segundas-feiras - 19:30<br>Araucária - Central: Espaço Infantil todos os sábados - 19:00`
+        coletas: "Coleta única: Piedade, Construção e Diversos",
+        tss: "Araucária - Central: Todos os Sábados<br>Araucária - Thomaz Coelho: Todos os domingos<br>Araucária - Jardim Iguaçu: Todos os domingos",
+        avisos: "Araucária - Central: cultos todas as quintas-feiras - 14:00<br>Curitiba - Portão: cultos todas as segundas-feiras - 19:30<br>Araucária - Central: Espaço Infantil todos os sábados - 19:00"
     };
-    
 
     // Inicializar os editores com texto padrão
     const editorColetas = new Quill('#editor-coletas', quillConfig);    
@@ -145,10 +143,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 reunioes.forEach(reuniao => {
                     // Concatenar "tipo" e "obs" para a coluna "natureza"
                     const natureza = `${reuniao.tipo} - ${reuniao.obs}`.trim().replace(/-\s*$/, '');
-    
+
                     // Formatar a data antes de exibir
                     const dataFormatada = formatarData(reuniao.data);
-    
+
                     const linha = `
                         <tr>
                             <td>${dataFormatada}</td>
@@ -167,6 +165,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Carregar os registros de Outras Reuniões ao iniciar
     carregarOutrasReunioes();
 });
+
 
 
 

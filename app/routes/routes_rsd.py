@@ -163,5 +163,45 @@ def listar_naturezas():
     naturezas = Natureza.query.all()
     return jsonify([{"id": n.id, "descricao": n.descricao} for n in naturezas])
 
+@bp_rsd.route("/duplicar_item/<int:id>", methods=["POST"])
+def duplicar_rsd_item(id):
+    data = request.json
+
+    if not data or "data" not in data or "hora" not in data:
+        return jsonify({"error": "Data e hora são obrigatórias"}), 400
+
+    item = RSDItem.query.get(id)
+
+    if not item:
+        return jsonify({"error": "Registro original não encontrado!"}), 404
+
+    try:
+        nova_data = datetime.strptime(data["data"], "%d-%m-%Y").date()
+        nova_hora = datetime.strptime(data["hora"], "%H:%M").time()
+
+        novo_item = RSDItem(
+            tipo=item.tipo,
+            data=nova_data,
+            hora=nova_hora,
+            descricao=item.descricao,
+            atendimento=item.atendimento,
+            igreja=item.igreja,
+            lb=item.lb,
+            cl=item.cl
+        )
+
+        db.session.add(novo_item)
+        db.session.commit()
+
+        print(f"✅ Registro duplicado com sucesso! Novo ID: {novo_item.id}")
+
+        return jsonify({"message": "Registro duplicado com sucesso!", "id": novo_item.id})
+
+    except Exception as e:
+        print(f"❌ Erro ao duplicar registro: {e}")
+        db.session.rollback()
+        return jsonify({"error": "Erro ao duplicar registro", "details": str(e)}), 500
+
+
 
 

@@ -48,16 +48,57 @@ function atualizarTabelaRegistros() {
                         <button class="btn btn-success btn-sm me-2" onclick="salvarEdicao(${registro.id}, this)">
                             <i class="bi bi-check2-circle"></i>
                         </button>
+                        <button class="btn btn-warning btn-sm me-2" onclick="duplicarRegistro(${registro.id})">
+                            <i class="bi bi-files"></i> <!-- Ícone de duplicação -->
+                        </button>
                         <button class="btn btn-danger btn-sm" onclick="excluirRegistro(${registro.id})">
                             <i class="bi bi-trash"></i>
                         </button>
                     </td>
+
                 `;
             });
         })
         .catch(error => console.error("❌ Erro ao buscar registros:", error));
 }
 
+// função para duplicarRegistro
+
+function duplicarRegistro(id) {
+    if (!confirm("Deseja duplicar este registro?")) {
+        return;
+    }
+
+    let novaData = prompt("Informe a nova data (dd-mm-yyyy):");
+    if (!novaData || !/^\d{2}-\d{2}-\d{4}$/.test(novaData)) {
+        alert("Data inválida. Use o formato dd-mm-yyyy.");
+        return;
+    }
+
+    let novaHora = prompt("Informe a nova hora (HH:mm):");
+    if (!novaHora || !/^\d{2}:\d{2}$/.test(novaHora)) {
+        alert("Hora inválida. Use o formato HH:mm.");
+        return;
+    }
+
+    console.log(`🔹 Duplicando registro ID ${id} para ${novaData} às ${novaHora}`);
+
+    fetch(`/rsd/duplicar_item/${id}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ data: novaData, hora: novaHora })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+            alert("Erro ao duplicar: " + data.error);
+        } else {
+            alert("Registro duplicado com sucesso!");
+            atualizarTabelaRegistros();
+        }
+    })
+    .catch(error => console.error("❌ Erro ao duplicar registro:", error));
+}
 
 
 

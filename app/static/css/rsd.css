@@ -44,25 +44,45 @@
     background-color: #f8f9fa;
 }
 
-/* ========================== MODAIS ========================== */
-.modal-header {
-    background-color: #343a40;
+/* ========================== TABELA COMPACTA ========================== */
+.table-responsive {
+    margin-top: 15px;
+}
+
+.table {
+    font-size: 12px; /* Tabela mais compacta */
+    border-collapse: collapse;
+}
+
+.table th, .table td {
+    padding: 5px 8px; /* Redução do espaçamento */
+    text-align: center;
+    border: 1px solid #ccc;
+}
+
+.table th {
+    background: #343a40;
     color: white;
 }
 
-.modal-body {
-    padding: 15px;
+.table tbody tr:nth-child(even) {
+    background: #f8f9fa;
 }
 
-.btn-sm {
-    font-size: 0.8rem;
-    padding: 4px 8px;
-}
-
-/* Espaçamento entre os botões */
-.btn-group {
+/* ========================== FORMULÁRIO DE FILTRO ========================== */
+.filter-container {
     display: flex;
-    gap: 8px; /* Aumenta o espaçamento entre os botões */
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
 }
+
+#filterInput {
+    width: 250px;
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
 
 

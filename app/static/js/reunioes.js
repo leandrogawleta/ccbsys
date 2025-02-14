@@ -107,7 +107,7 @@ function atualizarTabela(reunioes) {
             <td data-label="Natureza">${reuniao.natureza}</td>
             <td data-label="Local">${reuniao.local}</td>
             <td data-label="Atendimento" class="text-center">${reuniao.atendimento}</td>
-            <td data-label="Observação">${reuniao.obs || "-"}</td>
+            
         `;
 
         tbody.appendChild(row);

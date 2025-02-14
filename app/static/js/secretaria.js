@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", () => {
     carregarIgrejas();
     carregarNaturezas();
 
@@ -6,87 +6,81 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("formNatureza").addEventListener("submit", salvarNatureza);
 });
 
-const API_BASE_URL = "/secretaria";  // ✅ Definir o prefixo correto
+const API_BASE_URL = "/secretaria";
 
 // ================================
 // ✅ Função: Carregar Igrejas
 // ================================
-function carregarIgrejas() {
-    fetch(`${API_BASE_URL}/igrejas`)
-        .then(response => response.json())
-        .then(data => {
-            let tabela = document.getElementById("tabelaIgrejas");
-            tabela.innerHTML = "";
-            data.forEach(igreja => {
-                tabela.innerHTML += `
-                    <tr>
-                        <td>${igreja.Nome}</td>
-                        <td>${igreja.Cidade}</td>
-                        <td>${igreja.Setor}</td>
-                        <td>${igreja.Endereco || 'Não informado'}</td>
-                        <td>
-                            <button class="btn btn-warning btn-sm me-1" onclick="editarIgreja(${igreja.id}, '${igreja.Nome}', '${igreja.Cidade}', '${igreja.Setor}', '${igreja.Endereco}')">
-                                <i class="bi bi-pencil-square"></i>
-                            </button>
-                            <button class="btn btn-danger btn-sm" onclick="excluirIgreja(${igreja.id})">
-                                <i class="bi bi-trash-fill"></i>
-                            </button>
-                        </td>
-                    </tr>
-                `;
-            });
-        })
-        .catch(error => console.error("❌ Erro ao carregar igrejas:", error));
+async function carregarIgrejas() {
+    try {
+        const resposta = await fetch(`${API_BASE_URL}/igrejas`);
+        const dados = await resposta.json();
+        const tabela = document.getElementById("tabelaIgrejas");
+        tabela.innerHTML = dados.length ? dados.map(i => `
+            <tr>
+                <td>${i.nome}</td>
+                <td>${i.cidade}</td>
+                <td>${i.setor}</td>
+                <td>${i.endereco || 'Não informado'}</td>
+                <td>
+                    <button class="btn btn-warning btn-sm me-1" onclick="editarIgreja(${i.id}, '${i.nome}', '${i.cidade}', '${i.setor}', '${i.endereco}')">
+                        <i class="bi bi-pencil-square"></i>
+                    </button>
+                    <button class="btn btn-danger btn-sm" onclick="excluirIgreja(${i.id})">
+                        <i class="bi bi-trash-fill"></i>
+                    </button>
+                </td>
+            </tr>`).join("") : `<tr><td colspan="5" class="text-center">Nenhuma igreja cadastrada.</td></tr>`;
+    } catch (error) {
+        console.error("❌ Erro ao carregar igrejas:", error);
+    }
 }
 
 // ================================
 // ✅ Função: Salvar Igreja
 // ================================
-function salvarIgreja(event) {
+async function salvarIgreja(event) {
     event.preventDefault();
 
-    let igrejaId = document.getElementById("igrejaId").value;
-    let nome = document.getElementById("nomeIgreja").value;
-    let cidade = document.getElementById("cidadeIgreja").value;
-    let setor = document.getElementById("setorIgreja").value;
-    let endereco = document.getElementById("enderecoIgreja").value;
+    // Capturar valores corretamente
+    const igrejaId = document.getElementById("igrejaId").value;
+    const nome = document.getElementById("nomeIgreja").value.trim();
+    const cidade = document.getElementById("cidadeIgreja").value.trim();
+    const setor = document.getElementById("setorIgreja").value.trim();
+    const endereco = document.getElementById("enderecoIgreja").value.trim();
 
-    let url = igrejaId ? `${API_BASE_URL}/igreja/${igrejaId}/editar` : `${API_BASE_URL}/igreja`;
-    let metodo = igrejaId ? "PUT" : "POST";
+    if (!nome || !cidade || !setor) {
+        alert("⚠️ Nome, cidade e setor são obrigatórios!");
+        return;
+    }
 
-    fetch(url, {
-        method: metodo,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ Nome: nome, Cidade: cidade, Setor: setor, Endereco: endereco })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.error) {
-            alert(`❌ Erro: ${data.error}`);
-            return;
+    const url = igrejaId ? `${API_BASE_URL}/igreja/${igrejaId}` : `${API_BASE_URL}/igreja`;
+    const metodo = igrejaId ? "PUT" : "POST";
+
+    try {
+        const resposta = await fetch(url, {
+            method: metodo,
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ nome, cidade, setor, endereco })
+        });
+
+        const resultado = await resposta.json();
+        alert(resultado.message || resultado.error);
+
+        if (!resultado.error) {
+            document.getElementById("formIgreja").reset();
+            document.getElementById("igrejaId").value = "";
+            fecharModal("modalCadastroIgreja");
+            carregarIgrejas();
         }
-
-        alert(data.message);
-
-        // ✅ Resetar formulário e ID
-        document.getElementById("formIgreja").reset();
-        document.getElementById("igrejaId").value = "";
-
-        // ✅ Fechar modal automaticamente
-        let modal = bootstrap.Modal.getInstance(document.getElementById("modalCadastroIgreja"));
-        if (modal) modal.hide();
-
-        // ✅ Corrigir problema de página desativada (remove classe `modal-open` e `backdrop`)
-        document.body.classList.remove("modal-open");
-        document.querySelectorAll(".modal-backdrop").forEach(el => el.remove());
-
-        // ✅ Atualizar lista de igrejas sem recarregar a página
-        carregarIgrejas();
-    })
-    .catch(error => console.error("❌ Erro ao salvar igreja:", error));
+    } catch (error) {
+        console.error("❌ Erro ao salvar igreja:", error);
+    }
 }
 
+// ================================
 // ✅ Função: Editar Igreja
+// ================================
 function editarIgreja(id, nome, cidade, setor, endereco) {
     document.getElementById("igrejaId").value = id;
     document.getElementById("nomeIgreja").value = nome;
@@ -94,190 +88,124 @@ function editarIgreja(id, nome, cidade, setor, endereco) {
     document.getElementById("setorIgreja").value = setor;
     document.getElementById("enderecoIgreja").value = endereco || "";
 
-    // 🔹 Exibir o modal corretamente
-    let modal = new bootstrap.Modal(document.getElementById("modalCadastroIgreja"));
-    modal.show();
+    abrirModal("modalCadastroIgreja");
 }
 
 // ================================
-// 🔹 Função: Excluir Igreja
+// ✅ Função: Excluir Igreja
 // ================================
-function excluirIgreja(id) {
+async function excluirIgreja(id) {
     if (confirm("⚠️ Tem certeza que deseja excluir esta igreja?")) {
-        fetch(`${API_BASE_URL}/igreja/${id}/excluir`, { method: "DELETE" })
-            .then(response => response.json())
-            .then(data => {
-                if (data.error) {
-                    alert(`❌ Erro: ${data.error}`);
-                    return;
-                }
-
-                alert(data.message);
-                carregarIgrejas(); // 🔹 Atualiza a lista após excluir
-            })
-            .catch(error => console.error("❌ Erro ao excluir igreja:", error));
+        try {
+            const resposta = await fetch(`${API_BASE_URL}/igreja/${id}`, { method: "DELETE" });
+            const resultado = await resposta.json();
+            alert(resultado.message || resultado.error);
+            carregarIgrejas();
+        } catch (error) {
+            console.error("❌ Erro ao excluir igreja:", error);
+        }
     }
 }
 
 // ================================
 // ✅ Função: Carregar Naturezas
 // ================================
-function carregarNaturezas() {
-    fetch(`${API_BASE_URL}/naturezas`)
-        .then(response => response.json())
-        .then(data => {
-            let tabela = document.getElementById("tabelaNatureza");
-            if (!tabela) {
-                console.error("⚠️ Erro: Elemento 'tabelaNatureza' não encontrado.");
-                return;
-            }
-
-            tabela.innerHTML = ""; // Limpa a tabela antes de recarregar os dados
-
-            if (data.length === 0) {
-                tabela.innerHTML = `<tr><td colspan="2" class="text-center">Nenhuma natureza cadastrada.</td></tr>`;
-                return;
-            }
-
-            data.forEach(natureza => {
-                let linha = document.createElement("tr");
-                linha.innerHTML = `
-                    <td>${natureza.descricao}</td>
-                    <td>
-                        <button class="btn btn-warning btn-sm me-1" onclick="editarNatureza(${natureza.id}, '${natureza.descricao}')">
-                            <i class="bi bi-pencil-square"></i>
-                        </button>
-                        <button class="btn btn-danger btn-sm" onclick="excluirNatureza(${natureza.id})">
-                            <i class="bi bi-trash-fill"></i>
-                        </button>
-                    </td>
-                `;
-                tabela.appendChild(linha);
-            });
-        })
-        .catch(error => console.error("❌ Erro ao carregar naturezas:", error));
+async function carregarNaturezas() {
+    try {
+        const resposta = await fetch(`${API_BASE_URL}/naturezas`);
+        const dados = await resposta.json();
+        const tabela = document.getElementById("tabelaNatureza");
+        tabela.innerHTML = dados.length ? dados.map(n => `
+            <tr>
+                <td>${n.descricao}</td>
+                <td>
+                    <button class="btn btn-warning btn-sm me-1" onclick="editarNatureza(${n.id}, '${n.descricao}')">
+                        <i class="bi bi-pencil-square"></i>
+                    </button>
+                    <button class="btn btn-danger btn-sm" onclick="excluirNatureza(${n.id})">
+                        <i class="bi bi-trash-fill"></i>
+                    </button>
+                </td>
+            </tr>`).join("") : `<tr><td colspan="2" class="text-center">Nenhuma natureza cadastrada.</td></tr>`;
+    } catch (error) {
+        console.error("❌ Erro ao carregar naturezas:", error);
+    }
 }
 
 // ================================
-// ✅ Função: Salvar Natureza (Criar ou Editar)
+// ✅ Função: Salvar Natureza
 // ================================
-function salvarNatureza(event) {
+async function salvarNatureza(event) {
     event.preventDefault();
 
-    let naturezaId = document.getElementById("naturezaId").value;
-    let descricao = document.getElementById("descricaoNatureza").value.trim();
+    const form = event.target;
+    const naturezaId = document.getElementById("naturezaId").value;
+    const dados = Object.fromEntries(new FormData(form));
+    const url = naturezaId ? `${API_BASE_URL}/natureza/${naturezaId}` : `${API_BASE_URL}/natureza`;
+    const metodo = naturezaId ? "PUT" : "POST";
 
-    if (!descricao) {
-        alert("⚠️ A descrição da Natureza não pode estar vazia!");
-        return;
-    }
+    try {
+        const resposta = await fetch(url, {
+            method: metodo,
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(dados)
+        });
 
-    let url = naturezaId ? `${API_BASE_URL}/natureza/${naturezaId}/editar` : `${API_BASE_URL}/natureza`;
-    let metodo = naturezaId ? "PUT" : "POST";
+        const resultado = await resposta.json();
+        alert(resultado.message || resultado.error);
 
-    fetch(url, {
-        method: metodo,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ descricao })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.error) {
-            alert(`❌ Erro: ${data.error}`);
-            return;
+        if (!resultado.error) {
+            form.reset();
+            document.getElementById("naturezaId").value = "";
+            fecharModal("modalCadastroNatureza");
+            carregarNaturezas();
         }
-
-        alert(data.message);
-
-        // ✅ Resetar formulário e ID para nova inserção
-        document.getElementById("formNatureza").reset();
-        document.getElementById("naturezaId").value = "";
-
-        // ✅ Fechar modal corretamente
-        let modal = bootstrap.Modal.getInstance(document.getElementById("modalCadastroNatureza"));
-        if (modal) modal.hide();
-
-        // ✅ Corrigir problema de página desativada (remove `modal-open` e `backdrop`)
-        document.body.classList.remove("modal-open");
-        document.querySelectorAll(".modal-backdrop").forEach(el => el.remove());
-
-        // ✅ Atualizar lista de naturezas sem precisar de refresh
-        carregarNaturezas();
-    })
-    .catch(error => console.error("❌ Erro ao salvar natureza:", error));
+    } catch (error) {
+        console.error("❌ Erro ao salvar natureza:", error);
+    }
 }
 
 // ================================
-// ✅ Função: Editar Natureza (Preencher Modal)
+// ✅ Função: Editar Natureza
 // ================================
 function editarNatureza(id, descricao) {
     document.getElementById("naturezaId").value = id;
     document.getElementById("descricaoNatureza").value = descricao;
 
-    // 🔹 Exibir o modal corretamente
-    let modal = new bootstrap.Modal(document.getElementById("modalCadastroNatureza"));
-    modal.show();
+    abrirModal("modalCadastroNatureza");
 }
 
 // ================================
 // ✅ Função: Excluir Natureza
 // ================================
-function excluirNatureza(id) {
+async function excluirNatureza(id) {
     if (confirm("⚠️ Tem certeza que deseja excluir esta natureza?")) {
-        fetch(`${API_BASE_URL}/natureza/${id}/excluir`, { method: "DELETE" })
-            .then(response => response.json())
-            .then(data => {
-                if (data.error) {
-                    alert(`❌ Erro: ${data.error}`);
-                    return;
-                }
-
-                alert(data.message);
-                carregarNaturezas(); // 🔹 Atualiza a lista após excluir
-            })
-            .catch(error => console.error("❌ Erro ao excluir natureza:", error));
-    }
-}
-
-function salvarNatureza(event) {
-    event.preventDefault();
-
-    let naturezaId = document.getElementById("naturezaId").value;
-    let descricao = document.getElementById("descricaoNatureza").value.trim();
-
-    if (!descricao) {
-        alert("⚠️ A descrição da Natureza não pode estar vazia!");
-        return;
-    }
-
-    let url = naturezaId ? `${API_BASE_URL}/natureza/${naturezaId}/editar` : `${API_BASE_URL}/natureza`;
-    let metodo = naturezaId ? "PUT" : "POST";
-
-    fetch(url, {
-        method: metodo,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ descricao })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.error) {
-            alert(`❌ Erro: ${data.error}`);
-            return;
+        try {
+            const resposta = await fetch(`${API_BASE_URL}/natureza/${id}`, { method: "DELETE" });
+            const resultado = await resposta.json();
+            alert(resultado.message || resultado.error);
+            carregarNaturezas();
+        } catch (error) {
+            console.error("❌ Erro ao excluir natureza:", error);
         }
-
-        alert(data.message);
-
-        // ✅ Resetar formulário e ID
-        document.getElementById("formNatureza").reset();
-        document.getElementById("naturezaId").value = "";
-
-        // ✅ Fechar modal automaticamente
-        let modal = bootstrap.Modal.getInstance(document.getElementById("modalCadastroNatureza"));
-        if (modal) modal.hide();
-
-        // ✅ Atualizar lista após salvar
-        carregarNaturezas();
-    })
-    .catch(error => console.error("❌ Erro ao salvar natureza:", error));
+    }
 }
+
+// ================================
+// ✅ Funções de Manipulação de Modal
+// ================================
+function abrirModal(idModal) {
+    const modal = new bootstrap.Modal(document.getElementById(idModal));
+    modal.show();
+}
+
+function fecharModal(idModal) {
+    const modal = bootstrap.Modal.getInstance(document.getElementById(idModal));
+    if (modal) modal.hide();
+
+    // 🔹 Remover backdrop manualmente para evitar bug
+    document.body.classList.remove("modal-open");
+    document.querySelectorAll(".modal-backdrop").forEach(el => el.remove());
+}
+
 

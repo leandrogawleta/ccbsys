@@ -2,16 +2,25 @@
    ESTILIZAÇÃO DA TABELA DE REUNIÕES
    ========================== */
 
-/* Ajuste da altura da linha para ficar mais compacta */
+/* Garante que os tamanhos definidos das colunas sejam respeitados */
+.table {
+    width: 100%;
+    table-layout: auto; /* Permite que o conteúdo defina o tamanho */
+    border-collapse: collapse; /* Remove espaços entre células */
+}
+
+/* Estilização das células */
 .table th, .table td {
-    padding: 6px 10px; /* Reduz o espaçamento interno */
-    font-size: 14px; /* Mantém um tamanho de fonte legível */
+    padding: 6px 10px;
+    font-size: 14px;
     text-align: center;
+    border: 1px solid #ddd; /* Bordas sutis para separação */
+    white-space: nowrap; /* Impede quebra de texto em colunas menores */
 }
 
 /* Cabeçalho com tom de cinza claro */
 .table thead {
-    background-color: #f2f2f2; /* Cinza claro */
+    background-color: #f2f2f2;
     color: #333;
     font-weight: bold;
     text-transform: uppercase;
@@ -19,7 +28,7 @@
 
 /* Ajuste do cabeçalho */
 .table th {
-    padding: 8px 12px; /* Reduz um pouco o espaço interno */
+    padding: 8px 12px;
     border-bottom: 2px solid #ddd;
 }
 
@@ -47,6 +56,35 @@
     border-radius: 0 5px 5px 0;
 }
 
+/* Ajuste das colunas para que ocupem somente o espaço do texto */
+.table th:nth-child(1), .table td:nth-child(1) { /* Data */
+    width: min-content;
+    min-width: 50px;
+}
+
+.table th:nth-child(2), .table td:nth-child(2) { /* Hora */
+    width: min-content;
+    min-width: 40px;
+}
+
+.table th:nth-child(3), .table td:nth-child(3) { /* Natureza */
+    width: 100%; /* Ocupa o espaço restante */
+    min-width: 200px;
+    white-space: normal; /* Permite quebra de linha */
+    word-wrap: break-word;
+    text-align: left;
+}
+
+.table th:nth-child(4), .table td:nth-child(4) { /* Local */
+    width: min-content;
+    min-width: 80px;
+}
+
+.table th:nth-child(5), .table td:nth-child(5) { /* Atendimento */
+    width: min-content;
+    min-width: 80px;
+}
+
 /* Ajuste para responsividade */
 @media (max-width: 768px) {
     .table thead {
@@ -67,6 +105,7 @@
         text-align: right;
         padding-left: 50%;
         position: relative;
+        white-space: normal; /* Permite quebra de linha em telas pequenas */
     }
 
     .table td::before {
@@ -77,13 +116,6 @@
         text-transform: uppercase;
     }
 }
-
-/* Garante que a data seja exibida como texto e não formatada automaticamente */
-.data-formatada {
-    font-family: inherit !important;
-    white-space: nowrap;
-}
-
 
 
 

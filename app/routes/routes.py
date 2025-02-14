@@ -218,7 +218,7 @@ def api_reunioes():
         FROM outras_reunioes
         UNION
         SELECT 
-            Data, Hora, Tipo AS natureza, igreja AS local, Atendimento, Descricao AS obs
+            Data, Hora, descricao AS natureza, igreja AS local, Atendimento, Descricao AS obs
         FROM rsd_item
     """)
 
@@ -264,7 +264,7 @@ def imprimir_calendario(ano):
     query = text("""
         SELECT data, hora, tipo AS natureza, local, atendimento, obs FROM outras_reunioes
         UNION
-        SELECT Data, Hora, Tipo AS natureza, igreja AS local, Atendimento, Descricao AS obs FROM rsd_item
+        SELECT Data, Hora, descricao AS natureza, igreja AS local, Atendimento, Descricao AS obs FROM rsd_item
     """)
 
     resultados = db.session.execute(query).fetchall()
