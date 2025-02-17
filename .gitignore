@@ -1,0 +1,45 @@
+# 🔹 Arquivos compilados do Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# 🔹 Ambiente virtual (se estiver dentro da pasta do projeto)
+venv/
+env/
+
+# 🔹 Logs e arquivos temporários
+*.log
+*.tmp
+*.bak
+*.swp
+.DS_Store  # MacOS
+Thumbs.db  # Windows
+
+# 🔹 Configurações locais e credenciais
+.env
+config.json
+secrets.json
+
+# 🔹 Banco de dados local (caso use SQLite)
+*.sqlite3
+*.db
+
+# 🔹 Arquivos gerados por IDEs e editores de código
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# 🔹 Dependências (caso usem pipenv ou poetry)
+Pipfile
+Pipfile.lock
+poetry.lock
+
+# 🔹 Arquivos gerados por Jupyter Notebooks
+.ipynb_checkpoints/
+
+# 🔹 Pastas de builds e deploys
+dist/
+build/
+ 
