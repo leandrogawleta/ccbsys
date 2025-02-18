@@ -2,7 +2,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const imprimirBtn = document.getElementById('imprimirLista');
     if (imprimirBtn) {
         imprimirBtn.addEventListener('click', function () {
-            // Coleta os dados de todas as tabelas
             const tabelas = {
                 batismos: getTableData('batismosTable'),
                 ensaios: getTableData('ensaiosTable'),
@@ -12,15 +11,23 @@ document.addEventListener('DOMContentLoaded', function () {
             };
 
             // Combina "Reuniões Ministeriais" e "Outras Reuniões" em um único array
-            const reunioesCombinadas = [
-                ...tabelas.ministerial,
-                ...tabelas.outrasReunioes
-            ];
+            let reunioesCombinadas = [...tabelas.ministerial, ...tabelas.outrasReunioes];
 
-            // Ordena as reuniões combinadas por data (assumindo que a data está na primeira coluna)
-            reunioesCombinadas.sort((a, b) => new Date(a[0]) - new Date(b[0]));
+            // 🔹 Normaliza o formato da hora (remove os segundos, se existirem)
+            reunioesCombinadas = reunioesCombinadas.map(row => {
+                const [data, hora, ...resto] = row;
+                const horaNormalizada = hora.split(':').slice(0, 2).join(':'); // Remove os segundos
+                return [data, horaNormalizada, ...resto];
+            });
 
-            // Coleta os textos dos editores
+            // 🔹 Ordena a tabela por Data e depois por Hora
+            reunioesCombinadas.sort((a, b) => {
+                // Converte a data para o formato yyyy-mm-dd
+                const dataA = new Date(a[0].split('/').reverse().join('-') + 'T' + a[1]);
+                const dataB = new Date(b[0].split('/').reverse().join('-') + 'T' + b[1]);
+                return dataA - dataB;
+            });
+
             const textos = {
                 coletas: document.querySelector('#editor-coletas .ql-editor').innerHTML,
                 tss: document.querySelector('#editor-tss .ql-editor').innerHTML,
@@ -31,6 +38,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const dataFim = document.getElementById('dataFim').value || 'Data não especificada';
 
             const novaJanela = window.open('', '_blank');
+
             novaJanela.document.write(`
                 <!DOCTYPE html>
                 <html lang="pt-br">
@@ -38,60 +46,63 @@ document.addEventListener('DOMContentLoaded', function () {
                     <meta charset="UTF-8">
                     <meta name="viewport" content="width=device-width, initial-scale=1.0">
                     <title>Relatório - Lista de Batismo e Serviços Diversos</title>
+                    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
                     <style>
                         @page { size: A4; margin: 5mm; }
-                        body { font-family: Arial, sans-serif; color: #333; line-height: 1.5; }
+                        body { font-family: Arial, sans-serif; color: #333; line-height: 1.2; }
                         .a4 { width: 210mm; min-height: 297mm; margin: auto; padding: 10mm; background: #fff; }
-                        .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
-                        .header img { max-width: 60px; height: auto; margin-right: 15px; }
-                        .header .title { font-size: 18px; font-weight: bold; color: #007bff; }
-                        .header .subtitle { font-size: 16px; font-weight: bold; color: #333; }
-                        .header .period { font-size: 14px; color: #555; font-weight: bold; }
-                        h2 { font-size: 16px; font-weight: bold; color: #007bff; margin: 15px 0 10px; }
-                        table { width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: 20px; }
+                        .header { text-align: center; margin-bottom: 20px; }
+                        .header .title-main { font-size: 18px; font-weight: bold; text-transform: uppercase; }
+                        .header .title-sub { font-size: 14px; font-weight: bold; margin-top: 5px; }
+                        .header .period { font-size: 12px; font-weight: bold; margin-top: 5px; }
+                        h2 { font-size: 14px; font-weight: bold; color: #000; margin: 10px 0 5px; display: flex; align-items: center; }
+                        h2 i { margin-right: 8px; color: #000; }
+                        table { width: 100%; border-collapse: collapse; font-size: 11px; margin-bottom: 10px; table-layout: fixed; }
                         table, th, td { border: 1px solid #ddd; }
-                        th, td { padding: 5px; text-align: center; word-break: break-word; }
-                        th { background: #f0f0f0; font-weight: bold; }
-                        .text-sections { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
-                        .text-sections .half-width { flex: 1; min-width: calc(50% - 5px); display: flex; flex-direction: column; }
-                        .text-sections .full-width { width: 100%; }
-                        .content-box { border: 1px solid #ddd; padding: 5px; background: #f9f9f9; } /* Removido flex: 1 */
-                        .formatted-content { font-size: 12px; text-align: left; color: #333; line-height: 1; margin: 0; } /* Ajustado line-height */
-                        .footer { text-align: center; font-size: 12px; color: #777; margin-top: 20px; }
+                        th, td { padding: 3px; text-align: center; word-break: break-word; line-height: 1; }
+                        th { 
+                            background: #bfbfbf; 
+                            font-weight: bold; 
+                            color: #000; 
+                            -webkit-print-color-adjust: exact; 
+                            print-color-adjust: exact;
+                        }
+                        th:nth-child(1) { width: 15%; }
+                        th:nth-child(2) { width: 10%; }
+                        th:nth-child(3) { width: 35%; text-align: left; }
+                        th:nth-child(4) { width: 20%; }
+                        th:nth-child(5) { width: 20%; }
+                        td:nth-child(3) { text-align: left; }
+                        .text-sections { display: flex; flex-direction: column; gap: 5px; margin-bottom: 10px; }
+                        .content-box { border: 1px solid #ddd; padding: 3px; background: #f9f9f9; line-height: 1; }
+                        .formatted-content { font-size: 11px; text-align: left; color: #333; line-height: 1; margin: 0; }
+                        .formatted-content * { all: inherit; }
+                        .footer { text-align: center; font-size: 11px; color: #777; margin-top: 10px; }
                     </style>
                 </head>
-                <body>
+                <body onload="setTimeout(() => { window.print(); window.close(); }, 500);">
                     <div class="a4">
                         <div class="header">
-                            <img src="/static/logo.png" alt="Logo">
-                            <div>
-                                <div class="title">Congregação Cristã no Brasil - Araucária, Contenda e Lapa - PR</div>
-                                <div class="subtitle">Relatório - Lista de Batismo e Serviços Diversos</div>
-                                <div class="period">Período: ${dataInicio} a ${dataFim}</div>
-                            </div>
+                            <div class="title-main">CONGREGAÇÃO CRISTÃ NO BRASIL</div>
+                            <div class="title-sub">Lista de Batismo e Serviços Diversos - Araucária, Contenda e Lapa</div>
+                            <div class="period">Período: ${dataInicio} a ${dataFim}</div>
                         </div>
-                        ${generateSection('Batismos', tabelas.batismos)}
-                        ${generateSection('Ensaios Regionais', tabelas.ensaios)}
-                        ${generateSection('Reunião de Mocidade', tabelas.mocidade)}
-                        ${generateSection('Reuniões Ministeriais e Outras Reuniões', reunioesCombinadas)}
+                        ${generateSection('Batismos', tabelas.batismos, 'fa-water')}
+                        ${generateSection('Ensaios Regionais', tabelas.ensaios, 'fa-music')}
+                        ${generateSection('Reunião da Mocidade', tabelas.mocidade, 'fa-users')}
+                        ${generateSection('Reuniões Ministeriais e Outros', reunioesCombinadas, 'fa-handshake')}
                         <div class="text-sections">
-                            <div class="half-width">
-                                <h2>Coletas</h2>
-                                <div class="content-box">
-                                    <div class="formatted-content">${textos.coletas}</div>
-                                </div>
+                            <h2><i class="fas fa-hand-holding-usd"></i> Coletas</h2>
+                            <div class="content-box">
+                                <div class="formatted-content">${textos.coletas}</div>
                             </div>
-                            <div class="half-width">
-                                <h2>Cultos com Tradução Simultânea de Sinais (TSS)</h2>
-                                <div class="content-box">
-                                    <div class="formatted-content">${textos.tss}</div>
-                                </div>
+                            <h2><i class="fas fa-sign-language"></i> Cultos com Tradução Simultânea de Sinais (TSS)</h2>
+                            <div class="content-box">
+                                <div class="formatted-content">${textos.tss}</div>
                             </div>
-                            <div class="full-width">
-                                <h2>Avisos / Observações</h2>
-                                <div class="content-box">
-                                    <div class="formatted-content">${textos.avisos}</div>
-                                </div>
+                            <h2><i class="fas fa-bullhorn"></i> Avisos / Observações</h2>
+                            <div class="content-box">
+                                <div class="formatted-content">${textos.avisos}</div>
                             </div>
                         </div>
                         <div class="footer">Rua Bonifacio Kaiut, 89 - Fazenda Velha, Araucária-PR</div>
@@ -99,8 +110,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 </body>
                 </html>
             `);
+
             novaJanela.document.close();
-            novaJanela.print();
         });
     }
 
@@ -109,7 +120,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!tabela) return [];
         return [...tabela.querySelectorAll('tbody tr')]
             .filter(tr => tr.style.display !== 'none')
-            .map(tr => [...tr.querySelectorAll('td')].map(td => td.innerText.trim()));
+            .map(tr => [...tr.querySelectorAll('td')].map(td => td.innerHTML.trim()));
     }
 
     function generateTableHTML(dados) {
@@ -119,10 +130,12 @@ document.addEventListener('DOMContentLoaded', function () {
         return `<table>${headers}${rows}</table>`;
     }
 
-    function generateSection(title, data) {
-        return data.length ? `<section><h2>${title}</h2>${generateTableHTML(data)}</section>` : '';
+    function generateSection(title, data, icon) {
+        return data.length ? `<section><h2><i class="fas ${icon}"></i> ${title}</h2>${generateTableHTML(data)}</section>` : '';
     }
 });
+
+
 
 
 
