@@ -55,7 +55,6 @@ function atualizarTabelaRegistros() {
                             <i class="bi bi-trash"></i>
                         </button>
                     </td>
-
                 `;
             });
         })
@@ -99,8 +98,6 @@ function duplicarRegistro(id) {
     })
     .catch(error => console.error("❌ Erro ao duplicar registro:", error));
 }
-
-
 
 // ===========================
 // 🔹 Salvar Edição ao Selecionar Igreja
@@ -159,12 +156,6 @@ function salvarEdicao(id, botao) {
     })
     .catch(error => console.error("❌ Erro ao atualizar registro:", error));
 }
-
-
-
-
-
-
 // ===========================
 // 🔹 Excluir Registro da Tabela e do Banco de Dados
 // ===========================
@@ -238,8 +229,6 @@ function verificarIgrejaAntesDeAbrirModal() {
         })
         .catch(error => console.error("Erro ao carregar naturezas:", error));
 }
-
-
 
 // ===========================
 // 🔹 Converter Data para Banco (YYYY-MM-DD) e Exibir no Frontend (DD-MM-YYYY)
@@ -361,8 +350,6 @@ function adicionarRegistro(event) {
     .catch(error => console.error("❌ Erro ao salvar registro:", error));
 }
 
-
-
 // ===========================
 // 🔹 Enviar os Dados Editados para o Backend
 // ===========================
@@ -428,12 +415,3 @@ document.addEventListener("DOMContentLoaded", function() {
         })
         .catch(error => console.error("Erro ao carregar naturezas:", error));
 });
-
-
-
-
-
-
-
-
-

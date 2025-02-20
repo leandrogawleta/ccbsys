@@ -7,11 +7,14 @@
     width: 100%;
     table-layout: auto; /* Permite que o conteúdo defina o tamanho */
     border-collapse: collapse; /* Remove espaços entre células */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra suave */
+    border-radius: 8px; /* Bordas arredondadas */
+    overflow: hidden; /* Esconde bordas arredondadas nas células */
 }
 
 /* Estilização das células */
 .table th, .table td {
-    padding: 6px 10px;
+    padding: 8px 12px;
     font-size: 14px;
     text-align: center;
     border: 1px solid #ddd; /* Bordas sutis para separação */
@@ -28,7 +31,7 @@
 
 /* Ajuste do cabeçalho */
 .table th {
-    padding: 8px 12px;
+    padding: 12px;
     border-bottom: 2px solid #ddd;
 }
 
@@ -46,6 +49,7 @@
 /* Hover na linha */
 .table tbody tr:hover {
     background: #e2e6ea;
+    cursor: pointer;
 }
 
 /* Bordas arredondadas na primeira e última célula da linha */
@@ -97,8 +101,9 @@
     }
 
     .table tr {
-        margin-bottom: 5px;
+        margin-bottom: 10px;
         border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra suave para linhas */
     }
 
     .table td {
@@ -114,6 +119,7 @@
         left: 15px;
         font-weight: bold;
         text-transform: uppercase;
+        color: #333;
     }
 }
 
