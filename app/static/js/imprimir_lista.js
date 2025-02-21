@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         .header { text-align: center; margin-bottom: 20px; }
                         .header .title-main { font-size: 18px; font-weight: bold; text-transform: uppercase; }
                         .header .title-sub { font-size: 14px; font-weight: bold; margin-top: 5px; }
-                        .header .period { font-size: 12px; font-weight: bold; margin-top: 5px; }
+                        .header .period { font-size: 14px; font-weight: bold; margin-top: 5px; }
                         h2 { font-size: 14px; font-weight: bold; color: #000; margin: 10px 0 5px; display: flex; align-items: center; }
                         h2 i { margin-right: 8px; color: #000; }
                         table { width: 100%; border-collapse: collapse; font-size: 11px; margin-bottom: 10px; table-layout: fixed; }
@@ -67,15 +67,15 @@ document.addEventListener('DOMContentLoaded', function () {
                             -webkit-print-color-adjust: exact; 
                             print-color-adjust: exact;
                         }
-                        th:nth-child(1) { width: 15%; }
+                        th:nth-child(1) { width: 10%; }
                         th:nth-child(2) { width: 10%; }
-                        th:nth-child(3) { width: 35%; text-align: left; }
+                        th:nth-child(3) { width: 40%; text-align: left; }
                         th:nth-child(4) { width: 20%; }
                         th:nth-child(5) { width: 20%; }
                         td:nth-child(3) { text-align: left; }
                         .text-sections { display: flex; flex-direction: column; gap: 5px; margin-bottom: 10px; }
                         .content-box { border: 1px solid #ddd; padding: 3px; background: #f9f9f9; line-height: 1; }
-                        .formatted-content { font-size: 11px; text-align: left; color: #333; line-height: 1; margin: 0; }
+                        .formatted-content { font-size: 12px; text-align: left; color: #333; line-height: 1; margin: 0; }
                         .formatted-content * { all: inherit; }
                         .footer { text-align: center; font-size: 11px; color: #777; margin-top: 10px; }
                     </style>

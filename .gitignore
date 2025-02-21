@@ -24,6 +24,7 @@ secrets.json
 # 🔹 Banco de dados local (caso use SQLite)
 *.sqlite3
 *.db
+database/app.db
 
 # 🔹 Arquivos gerados por IDEs e editores de código
 .vscode/

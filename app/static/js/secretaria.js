@@ -309,7 +309,6 @@ async function carregarReunioesSemana() {
         if (!resposta.ok) throw new Error(`Erro HTTP! Status: ${resposta.status}`);
 
         const dados = await resposta.json();
-
         const tabela = document.getElementById("tabelaReunioesSemana").getElementsByTagName("tbody")[0];
 
         if (!tabela) {
@@ -317,11 +316,23 @@ async function carregarReunioesSemana() {
             return;
         }
 
+        // Formatar Data e Hora corretamente antes de exibir na tabela
+        const formatarData = (dataString) => {
+            if (!dataString) return "Sem data";
+            const [ano, mes, dia] = dataString.split("-");
+            return `${dia}/${mes}/${ano}`;
+        };
+
+        const formatarHora = (horaString) => {
+            if (!horaString) return "Sem hora";
+            return horaString.substring(0, 5); // Pega apenas HH:mm
+        };
+
         tabela.innerHTML = dados.length
             ? dados.map(r => `
                 <tr>
-                    <td>${r.data || "Sem data"}</td>
-                    <td>${r.hora || "Sem hora"}</td>
+                    <td>${formatarData(r.data)}</td>
+                    <td>${formatarHora(r.hora)}</td>
                     <td>${r.descricao || "Sem descrição"}</td>
                     <td>${r.atendimento || "Sem atendimento"}</td>
                     <td>${r.igreja || "Sem local"}</td>
@@ -333,6 +344,7 @@ async function carregarReunioesSemana() {
         console.error("❌ Erro ao carregar reuniões da semana:", error);
     }
 }
+
 
 
 async function carregarGraficoReunioes() {
