@@ -1,46 +1,49 @@
-// Função para carregar registros de Outras Reuniões
 function carregarOutrasReunioes() {
     fetch('/outras_reunioes/listar')
         .then(response => response.json())
         .then(reunioes => {
+            console.log("Registros recebidos:", reunioes); // Debug no console
+
             const tabela = document.getElementById('outrasReunioesTable').querySelector('tbody');
             tabela.innerHTML = '';
 
             if (reunioes.length === 0) {
-                tabela.innerHTML = '<tr><td colspan="7" class="text-center">Nenhum registro encontrado</td></tr>';
+                tabela.innerHTML = '<tr><td colspan="5" class="text-center">Nenhum registro encontrado</td></tr>';
                 return;
             }
 
-            // Ordenar registros por data (do menor para o maior)
-            reunioes.sort((a, b) => new Date(a.data.split('/').reverse().join('-')) - new Date(b.data.split('/').reverse().join('-')));
-
             reunioes.forEach(reuniao => {
+                // Concatenar "tipo" e "obs" para a coluna "natureza"
+                const natureza = `${reuniao.tipo} - ${reuniao.obs}`.trim().replace(/-\s*$/, '');
+
+                // Garantindo que a data formatada seja exibida corretamente
+                const dataFormatada = formatarData(reuniao.data);
+
                 const linha = `
                     <tr>
-                        <td>${formatarData(reuniao.data)}</td>
-                        <td>${reuniao.hora}</td>
-                        <td>${reuniao.local}</td>
+                        <td>${dataFormatada}</td>
+                        <td>${reuniao.hora || '-'}</td>
+                        <td>${natureza || '-'}</td>
+                        <td>${reuniao.local || '-'}</td>
                         <td>${reuniao.atendimento || '-'}</td>
-                        <td>${reuniao.tipo}</td>
-                        <td>${reuniao.obs || '-'}</td>
-                        <td class="text-center">
-                            <button class="btn btn-danger btn-sm" onclick="excluirReuniao(${reuniao.id})">
-                                <i class="bi bi-trash-fill"></i> Excluir
-                            </button>
-                        </td>
                     </tr>
                 `;
                 tabela.innerHTML += linha;
             });
         })
-        .catch(error => console.error('Erro ao carregar reuniões:', error));
+        .catch(error => console.error('Erro ao carregar outras reuniões:', error));
 }
 
-// Função para formatar a data no formato dd/mm/yyyy
+// ✅ Corrigido para validar a entrada e evitar "undefined/undefined/Sem Data"
 function formatarData(data) {
-    if (!data) return '-';
-    const partes = data.split('-'); // Supondo que o formato recebido seja yyyy-mm-dd
-    return `${partes[2]}/${partes[1]}/${partes[0]}`;
+    if (!data || typeof data !== 'string') return 'Sem Data';
+
+    const partes = data.split('/');
+    if (partes.length === 3) {
+        return `${partes[0]}/${partes[1]}/${partes[2]}`;  // Mantendo dd/mm/yyyy
+    }
+
+    return 'Sem Data';
 }
 
 // Função para salvar uma nova reunião

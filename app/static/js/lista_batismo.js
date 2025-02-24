@@ -13,12 +13,19 @@ document.addEventListener('DOMContentLoaded', function () {
         return new Date(ano, mes - 1, dia); // Meses no JavaScript começam do índice 0
     }
 
-    // Função para formatar data de yyyy-mm-dd para dd/mm/yyyy
+    // ✅ Função corrigida para formatar corretamente a data no formato dd/mm/yyyy
     function formatarData(data) {
-        if (!data) return '';
-        const [ano, mes, dia] = data.split('-');
-        return `${dia}/${mes}/${ano}`;
+    if (!data || typeof data !== 'string') return 'Sem Data';
+
+    // Garante que a data esteja no formato correto
+    const partes = data.split('/');
+    if (partes.length === 3) {
+        return `${partes[0]}/${partes[1]}/${partes[2]}`;
     }
+
+    return 'Sem Data';
+}
+
 
     // Função para formatar hora de HH:mm:ss para HH:mm
     function formatarHora(hora) {

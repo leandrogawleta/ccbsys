@@ -316,17 +316,31 @@ async function carregarReunioesSemana() {
             return;
         }
 
-        // Formatar Data e Hora corretamente antes de exibir na tabela
+        // 🔹 Formatar Data e Hora corretamente antes de exibir na tabela
         const formatarData = (dataString) => {
             if (!dataString) return "Sem data";
-            const [ano, mes, dia] = dataString.split("-");
-            return `${dia}/${mes}/${ano}`;
+            if (dataString.includes("-")) { // Se for formato YYYY-MM-DD
+                const [ano, mes, dia] = dataString.split("-");
+                return `${dia}/${mes}/${ano}`;
+            }
+            return dataString; // Se já estiver no formato correto DD/MM/YYYY
         };
 
         const formatarHora = (horaString) => {
             if (!horaString) return "Sem hora";
             return horaString.substring(0, 5); // Pega apenas HH:mm
         };
+
+        // 🔹 Ordenar os dados manualmente por segurança (caso o backend falhe)
+        dados.sort((a, b) => {
+            const dataA = a.data.split("/").reverse().join("-"); // Converte para YYYY-MM-DD
+            const dataB = b.data.split("/").reverse().join("-");
+
+            if (dataA !== dataB) {
+                return dataA.localeCompare(dataB);
+            }
+            return a.hora.localeCompare(b.hora);
+        });
 
         tabela.innerHTML = dados.length
             ? dados.map(r => `
@@ -344,6 +358,7 @@ async function carregarReunioesSemana() {
         console.error("❌ Erro ao carregar reuniões da semana:", error);
     }
 }
+
 
 
 

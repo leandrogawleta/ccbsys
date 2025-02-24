@@ -1,9 +1,9 @@
 from flask import Blueprint, request, jsonify
 from app import db
 from app.models import Igreja, Natureza, OutrasReunioes, RSDItem
-from datetime import datetime, timedelta
-from sqlalchemy import text
+from datetime import datetime, timedelta, date, time
 
+from sqlalchemy import text
 
 # Criando o Blueprint
 bp = Blueprint("secretaria", __name__, url_prefix="/secretaria")
@@ -151,24 +151,23 @@ def obter_estatisticas():
     ano = request.args.get("ano", datetime.today().year, type=int)  # Ano padrão = ano atual
 
     consulta_total = text("""
-        SELECT COUNT(*) FROM rsd_item WHERE strftime('%Y', data) = :ano
+        SELECT COUNT(*) FROM rsd_item WHERE EXTRACT(YEAR FROM data) = :ano
         UNION ALL
-        SELECT COUNT(*) FROM outras_reunioes WHERE strftime('%Y', data) = :ano
+        SELECT COUNT(*) FROM outras_reunioes WHERE EXTRACT(YEAR FROM data) = :ano
     """)
-    total_reunioes = sum(row[0] for row in db.session.execute(consulta_total, {"ano": str(ano)}).fetchall())
+    total_reunioes = sum(row[0] for row in db.session.execute(consulta_total, {"ano": ano}).fetchall())
 
     consulta_concluidas = text("""
-        SELECT COUNT(*) FROM rsd_item WHERE strftime('%Y', data) = :ano AND data < :hoje
+        SELECT COUNT(*) FROM rsd_item WHERE EXTRACT(YEAR FROM data) = :ano AND data < :hoje
         UNION ALL
-        SELECT COUNT(*) FROM outras_reunioes WHERE strftime('%Y', data) = :ano AND data < :hoje
+        SELECT COUNT(*) FROM outras_reunioes WHERE EXTRACT(YEAR FROM data) = :ano AND data < :hoje
     """)
-    reunioes_concluidas = sum(row[0] for row in db.session.execute(consulta_concluidas, {"ano": str(ano), "hoje": datetime.today().date()}).fetchall())
+    reunioes_concluidas = sum(row[0] for row in db.session.execute(consulta_concluidas, {"ano": ano, "hoje": datetime.today().date()}).fetchall())
 
     return jsonify({
         "total_reunioes": total_reunioes,
         "reunioes_concluidas": reunioes_concluidas
     })
-
 
 # ==============================
 # 📌 Retornar quantidade de reuniões por tipo
@@ -182,37 +181,34 @@ def obter_reunioes_por_tipo():
 
     consulta = text("""
         SELECT descricao, COUNT(*) as total FROM (
-            SELECT r.Descricao as descricao FROM rsd_item r WHERE strftime('%Y', r.data) = :ano
+            SELECT r.Descricao as descricao FROM rsd_item r WHERE EXTRACT(YEAR FROM r.data) = :ano
             UNION ALL
-            SELECT o.tipo as descricao FROM outras_reunioes o WHERE strftime('%Y', o.data) = :ano
+            SELECT o.tipo as descricao FROM outras_reunioes o WHERE EXTRACT(YEAR FROM o.data) = :ano
         ) AS reunioes
         GROUP BY descricao
         ORDER BY total DESC
         LIMIT 10  -- Exibir apenas os 10 principais tipos
     """)
-
-    resultados = db.session.execute(consulta, {"ano": str(ano)}).fetchall()
+    resultados = db.session.execute(consulta, {"ano": ano}).fetchall()
 
     reunioes_por_tipo = {row[0]: row[1] for row in resultados}
     return jsonify(reunioes_por_tipo)
 
+#  proximas reuniões
 
-
-# ==============================
-# 📌 Retornar reuniões da semana
-# ==============================
 @bp.route("/semana", methods=["GET"])
 def obter_reunioes_semana():
-    """Retorna as reuniões que acontecerão nos próximos 7 dias"""
+    """Retorna as reuniões que acontecerão nos próximos 7 dias, ordenadas por data e hora"""
     hoje = datetime.today().date()
     proxima_semana = hoje + timedelta(days=7)
 
     consulta = text("""
-        SELECT data, hora, descricao, atendimento, igreja FROM rsd_item 
-        WHERE data BETWEEN :hoje AND :proxima_semana
+        SELECT data::DATE, hora::TIME, descricao, atendimento, igreja FROM rsd_item 
+        WHERE data::DATE BETWEEN :hoje AND :proxima_semana
         UNION ALL
-        SELECT data, hora, tipo as descricao, atendimento, local FROM outras_reunioes
-        WHERE data BETWEEN :hoje AND :proxima_semana
+        SELECT data::DATE, hora::TIME, tipo as descricao, atendimento, local FROM outras_reunioes
+        WHERE data::DATE BETWEEN :hoje AND :proxima_semana
+        ORDER BY data ASC, hora ASC  -- 🔹 Ordena por data e hora
     """)
 
     try:
@@ -223,10 +219,28 @@ def obter_reunioes_semana():
 
         reunioes_semana = []
         for r in resultados:
-            data_str = r[0] if isinstance(r[0], str) else r[0].strftime("%d/%m/%Y")
-            hora_str = r[1] if isinstance(r[1], str) else r[1].strftime("%H:%M")
+            # Correção do formato da data
+            data_str = "Data inválida"
+            if r[0]:  # Se a data não for None
+                if isinstance(r[0], datetime) or isinstance(r[0], date):
+                    data_str = r[0].strftime("%d/%m/%Y")
+                elif isinstance(r[0], str):  # Se for string, tenta converter
+                    try:
+                        data_str = datetime.strptime(r[0], "%Y-%m-%d").strftime("%d/%m/%Y")
+                    except ValueError:
+                        print(f"❌ Erro ao converter data: {r[0]}")
 
-            print(f"📌 Reunião encontrada: {r}")  # LOG para depuração
+            # Correção do formato da hora
+            hora_str = "Hora inválida"
+            if r[1]:  # Se a hora não for None
+                if isinstance(r[1], time):
+                    hora_str = r[1].strftime("%H:%M")
+                elif isinstance(r[1], str):  # Se for string, tenta converter
+                    try:
+                        hora_str = datetime.strptime(r[1], "%H:%M:%S").strftime("%H:%M")
+                    except ValueError:
+                        print(f"❌ Erro ao converter hora: {r[1]}")
+
             reunioes_semana.append({
                 "data": data_str,
                 "hora": hora_str,
@@ -238,8 +252,10 @@ def obter_reunioes_semana():
         return jsonify(reunioes_semana)
 
     except Exception as e:
-        print(f"❌ Erro ao obter reuniões da semana: {e}")  # LOG de erro
+        print(f"❌ Erro ao obter reuniões da semana: {e}")
         return jsonify({"error": f"Erro ao buscar reuniões da semana: {str(e)}"}), 500
+
+
 
 
 # ==============================
@@ -253,19 +269,18 @@ def obter_reunioes_por_mes():
 
     consulta = text("""
         SELECT 
-            strftime('%m', data) as mes, COUNT(*) as total 
+            EXTRACT(MONTH FROM data) as mes, COUNT(*) as total 
         FROM (
-            SELECT r.data FROM rsd_item r WHERE strftime('%Y', r.data) = :ano
+            SELECT r.data FROM rsd_item r WHERE EXTRACT(YEAR FROM r.data) = :ano
             UNION ALL
-            SELECT o.data FROM outras_reunioes o WHERE strftime('%Y', o.data) = :ano
+            SELECT o.data FROM outras_reunioes o WHERE EXTRACT(YEAR FROM o.data) = :ano
         ) AS reunioes
         GROUP BY mes
         ORDER BY mes
     """)
+    resultados = db.session.execute(consulta, {"ano": ano}).fetchall()
 
-    resultados = db.session.execute(consulta, {"ano": str(ano)}).fetchall()
-
-    reunioes_por_mes = {row[0]: row[1] for row in resultados}
+    reunioes_por_mes = {str(int(row[0])): row[1] for row in resultados}  # Converte o mês para string
     
     return jsonify(reunioes_por_mes)
 

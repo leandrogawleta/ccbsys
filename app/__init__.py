@@ -9,12 +9,18 @@ def create_app():
     app = Flask(__name__)
 
     # Configuração do caminho do banco de dados SQLite
-    basedir = os.path.abspath(os.path.dirname(__file__))
-    db_path = os.path.join(basedir, 'database', 'app.db')
+    #basedir = os.path.abspath(os.path.dirname(__file__))
+    #db_path = os.path.join(basedir, 'database', 'app.db')
 
+    # Configurações da aplicação sqlite
+    #app.config['SECRET_KEY'] = '84347900'
+    #app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
+    #app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+    # banco de dados render postgres
     # Configurações da aplicação
     app.config['SECRET_KEY'] = '84347900'
-    app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://admin:Mokrmp2q1qRnpMh604xDusJJpqnex91t@dpg-cuu4sq9opnds739t0fu0-a.ohio-postgres.render.com/ccbsys'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     # Inicializa o SQLAlchemy
@@ -24,10 +30,15 @@ def create_app():
     from app.models import Usuario, Igreja, Natureza
 
     # Garante que o banco de dados e o diretório sejam criados
+    #with app.app_context():
+    #    database_dir = os.path.join(basedir, 'database')
+    #    if not os.path.exists(database_dir):
+    #        os.makedirs(database_dir)
+    #    db.create_all()
+    #    print("Banco de dados inicializado com sucesso!")
+
+    # Cria as tabelas no PostgreSQL (se não existirem)
     with app.app_context():
-        database_dir = os.path.join(basedir, 'database')
-        if not os.path.exists(database_dir):
-            os.makedirs(database_dir)
         db.create_all()
         print("Banco de dados inicializado com sucesso!")
 

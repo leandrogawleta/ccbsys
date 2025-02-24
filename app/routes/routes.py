@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session, jsonify, make_response, send_file
 from app import db
-from datetime import datetime
+
+from datetime import datetime, time  # Adicione 'time' na importação
 from docx.shared import Pt, Inches
 from app.models import Usuario, Reuniao, ReuniaoData
 from app.routes.lista_batismo_routes import lista_batismo_bp
@@ -195,7 +196,9 @@ def calendario_html(ano):
             "reunioes": [
                 {
                     "dia": r['data'].strftime('%d'),
-                    "hora": r['hora'][:5],
+                    
+                    "hora": r['hora'].strftime('%H:%M') if isinstance(r['hora'], time) else r['hora'],
+
                     "natureza": r['natureza'],
                     "local": r['local'],
                     "atendimento": r['atendimento']
@@ -322,7 +325,7 @@ def imprimir_calendario(ano):
             "reunioes": [
                 {
                     "dia": r['data'].strftime('%d'),
-                    "hora": r['hora'][:5],
+                    "hora": r['hora'].strftime('%H:%M') if isinstance(r['hora'], time) else str(r['hora']),
                     "natureza": r['natureza'],
                     "local": r['local'],
                     "atendimento": r['atendimento']
