@@ -1,156 +1,188 @@
+document.addEventListener('DOMContentLoaded', function () {
+    carregarOutrasReunioes();
+    carregarNaturezas(); // 🔹 Garantir que a lista de naturezas seja carregada
+});
+
+// ✅ Função para carregar registros da tabela corretamente
 function carregarOutrasReunioes() {
     fetch('/outras_reunioes/listar')
         .then(response => response.json())
         .then(reunioes => {
-            console.log("Registros recebidos:", reunioes); // Debug no console
+            console.log("🔍 Registros recebidos:", reunioes);
 
             const tabela = document.getElementById('outrasReunioesTable').querySelector('tbody');
-            tabela.innerHTML = '';
+            tabela.innerHTML = ''; // Limpa a tabela antes de preenchê-la
 
             if (reunioes.length === 0) {
-                tabela.innerHTML = '<tr><td colspan="5" class="text-center">Nenhum registro encontrado</td></tr>';
+                tabela.innerHTML = '<tr><td colspan="7" class="text-center">Nenhum registro encontrado</td></tr>';
                 return;
             }
 
             reunioes.forEach(reuniao => {
-                // Concatenar "tipo" e "obs" para a coluna "natureza"
-                const natureza = `${reuniao.tipo} - ${reuniao.obs}`.trim().replace(/-\s*$/, '');
-
-                // Garantindo que a data formatada seja exibida corretamente
-                const dataFormatada = formatarData(reuniao.data);
+                const dataFormatada = formatarData(reuniao.data); // Converter yyyy-mm-dd para dd/mm/yyyy
+                const horaFormatada = reuniao.hora || '-';
+                const local = reuniao.local || '-';
+                const atendimento = reuniao.atendimento || '-';
+                const tipo = reuniao.tipo || '-';
+                const observacoes = reuniao.obs || '-';
 
                 const linha = `
                     <tr>
                         <td>${dataFormatada}</td>
-                        <td>${reuniao.hora || '-'}</td>
-                        <td>${natureza || '-'}</td>
-                        <td>${reuniao.local || '-'}</td>
-                        <td>${reuniao.atendimento || '-'}</td>
+                        <td>${horaFormatada}</td>
+                        <td>${local}</td>
+                        <td>${atendimento}</td>
+                        <td>${tipo}</td>
+                        <td>${observacoes}</td>
+                        <td class="text-center">
+                            <button class="btn btn-sm btn-primary" onclick="preencherModalEdicao(${reuniao.id})">
+                                <i class="bi bi-pencil"></i>
+                            </button>
+                            <button class="btn btn-sm btn-danger" onclick="excluirReuniao(${reuniao.id})">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </td>
                     </tr>
                 `;
                 tabela.innerHTML += linha;
             });
         })
-        .catch(error => console.error('Erro ao carregar outras reuniões:', error));
+        .catch(error => console.error('❌ Erro ao carregar outras reuniões:', error));
 }
 
-// ✅ Corrigido para validar a entrada e evitar "undefined/undefined/Sem Data"
-function formatarData(data) {
-    if (!data || typeof data !== 'string') return 'Sem Data';
+// ✅ Função para preencher o modal de edição
+function preencherModalEdicao(id) {
+    fetch(`/outras_reunioes/${id}`)
+        .then(response => response.json())
+        .then(reuniao => {
+            document.getElementById('reuniaoId').value = reuniao.id;
+            document.getElementById('data').value = formatarData(reuniao.data);
+            document.getElementById('hora').value = reuniao.hora;
+            document.getElementById('local').value = reuniao.local;
+            document.getElementById('atendimento').value = reuniao.atendimento;
+            document.getElementById('obs').value = reuniao.obs;
 
-    const partes = data.split('/');
-    if (partes.length === 3) {
-        return `${partes[0]}/${partes[1]}/${partes[2]}`;  // Mantendo dd/mm/yyyy
-    }
+            // 🔹 Buscar naturezas antes de definir a opção correta
+            fetch('/natureza/listar')
+                .then(response => response.json())
+                .then(naturezas => {
+                    const tipoSelect = document.getElementById('tipo');
+                    tipoSelect.innerHTML = '<option value="">Selecione uma opção</option>';
+                    naturezas.forEach(natureza => {
+                        const option = document.createElement('option');
+                        option.value = natureza.id;
+                        option.textContent = natureza.descricao;
+                        if (natureza.id == reuniao.tipo) {
+                            option.selected = true;
+                        }
+                        tipoSelect.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Erro ao carregar naturezas:', error));
 
-    return 'Sem Data';
+            let modal = new bootstrap.Modal(document.getElementById('modalOutrasReunioes'));
+            modal.show();
+        })
+        .catch(error => console.error('Erro ao carregar dados para edição:', error));
 }
 
-// Função para salvar uma nova reunião
+// ✅ Função para salvar ou editar uma reunião
 document.getElementById('formOutrasReunioes').addEventListener('submit', function (event) {
     event.preventDefault();
 
-    const data = document.getElementById('data').value; // dd/mm/yyyy
+    const id = document.getElementById('reuniaoId').value.trim();
+    const data = document.getElementById('data').value;
     const hora = document.getElementById('hora').value;
-    const local = document.getElementById('local').value.trim();
+    const local = document.getElementById('local').value;
+    const atendimento = document.getElementById('atendimento').value;
     const tipo = document.getElementById('tipo').value;
+    const obs = document.getElementById('obs').value;
 
-    // Verificar campos obrigatórios
     if (!data || !hora || !local || !tipo) {
-        alert('Por favor, preencha todos os campos obrigatórios.');
+        mostrarAlerta('danger', 'Preencha todos os campos obrigatórios.');
         return;
     }
 
-    const reuniao = {
-        data: data,
-        hora: hora,
-        local: local,
-        atendimento: document.getElementById('atendimento').value || '',
-        tipo: tipo,
-        obs: document.getElementById('obs').value || ''
-    };
+    const reuniao = { data, hora, local, atendimento, tipo, obs };
+    
+    const metodo = id ? 'PUT' : 'POST';
+    const url = id ? `/outras_reunioes/${id}/editar` : '/outras_reunioes/criar';
 
-    fetch('/outras_reunioes/criar', {
-        method: 'POST',
+    fetch(url, {
+        method: metodo,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(reuniao)
     })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert('Reunião registrada com sucesso!');
-                carregarOutrasReunioes();
-                document.getElementById('formOutrasReunioes').reset();
-                const modal = bootstrap.Modal.getInstance(document.getElementById('modalOutrasReunioes'));
-                modal.hide();
-            } else {
-                alert(`Erro ao registrar reunião: ${data.error}`);
-            }
-        })
-        .catch(error => console.error('Erro ao registrar reunião:', error));
-});
+    .then(response => response.json())
+    .then(result => {
+        if (result.success) {
+            mostrarAlerta('success', id ? 'Reunião atualizada com sucesso!' : 'Reunião cadastrada com sucesso!');
+            document.getElementById('formOutrasReunioes').reset();
+            document.getElementById('reuniaoId').value = '';
+            carregarOutrasReunioes();
 
-
-// Função para excluir uma reunião
-function excluirReuniao(id) {
-    if (confirm('Deseja realmente excluir este registro?')) {
-        fetch(`/outras_reunioes/excluir/${id}`, { method: 'DELETE' })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert('Reunião excluída com sucesso!');
-                    carregarOutrasReunioes();
-                } else {
-                    alert(`Erro ao excluir reunião: ${data.error}`);
-                }
-            })
-            .catch(error => console.error('Erro ao excluir reunião:', error));
-    }
-}
-
-// Tipos de reuniões pré-definidos
-const tiposReunioes = ['Culto para Mocidade', 'Culto de Evangelização', 'Ensaio Técnico Musical', 'Treinamento'];
-
-function carregarTipos() {
-    const tipoSelect = document.getElementById('tipo');
-    tipoSelect.innerHTML = '';
-
-    tiposReunioes.forEach(tipo => {
-        const option = document.createElement('option');
-        option.value = tipo;
-        option.textContent = tipo;
-        tipoSelect.appendChild(option);
-    });
-}
-
-function adicionarTipo() {
-    const novoTipo = prompt('Informe o novo tipo de reunião:');
-    if (novoTipo && !tiposReunioes.includes(novoTipo)) {
-        tiposReunioes.push(novoTipo);
-        carregarTipos();
-    } else {
-        alert('Tipo já existente ou inválido.');
-    }
-}
-
-function removerTipo() {
-    const tipoSelect = document.getElementById('tipo');
-    const tipoSelecionado = tipoSelect.value;
-
-    if (tiposReunioes.includes(tipoSelecionado)) {
-        const confirmacao = confirm(`Deseja realmente remover o tipo "${tipoSelecionado}"?`);
-        if (confirmacao) {
-            const index = tiposReunioes.indexOf(tipoSelecionado);
-            tiposReunioes.splice(index, 1);
-            carregarTipos();
+            let modal = bootstrap.Modal.getInstance(document.getElementById('modalOutrasReunioes'));
+            modal.hide();
+        } else {
+            mostrarAlerta('danger', 'Erro ao salvar reunião!');
         }
-    } else {
-        alert('Selecione um tipo válido para remover.');
+    })
+    .catch(error => mostrarAlerta('danger', 'Erro no servidor!'));
+});
+
+// ✅ Função para excluir reunião
+function excluirReuniao(id) {
+    if (!confirm('Deseja realmente excluir esta reunião?')) return;
+
+    fetch(`/outras_reunioes/${id}/excluir`, { method: 'DELETE' })
+    .then(response => response.json())
+    .then(result => {
+        if (result.success) {
+            mostrarAlerta('success', 'Reunião excluída com sucesso!');
+            carregarOutrasReunioes();
+        } else {
+            mostrarAlerta('danger', 'Erro ao excluir reunião!');
+        }
+    })
+    .catch(error => mostrarAlerta('danger', 'Erro no servidor!'));
+}
+
+// ✅ Função para carregar naturezas no campo "Tipo"
+function carregarNaturezas() {
+    fetch('/natureza/listar')
+        .then(response => response.json())
+        .then(naturezas => {
+            const tipoSelect = document.getElementById('tipo');
+            tipoSelect.innerHTML = '<option value="">Selecione uma opção</option>';
+            naturezas.forEach(natureza => {
+                const option = document.createElement('option');
+                option.value = natureza.id;
+                option.textContent = natureza.descricao;
+                tipoSelect.appendChild(option);
+            });
+        })
+        .catch(error => console.error('Erro ao carregar naturezas:', error));
+}
+
+// ✅ Função para formatar a data corretamente (yyyy-mm-dd → dd/mm/yyyy)
+function formatarData(data) {
+    if (!data || typeof data !== 'string') return 'Sem Data';
+    try {
+        const [ano, mes, dia] = data.split('-');
+        return `${dia}/${mes}/${ano}`;
+    } catch (error) {
+        return 'Sem Data';
     }
 }
 
-// Inicializa o carregamento de reuniões e tipos de reuniões
-document.addEventListener('DOMContentLoaded', function () {
-    carregarOutrasReunioes();
-    carregarTipos();
-});
+// ✅ Mostrar alertas de erro/sucesso
+function mostrarAlerta(tipo, mensagem) {
+    const alerta = document.createElement('div');
+    alerta.className = `alert alert-${tipo} alert-dismissible fade show position-fixed top-0 end-0 m-3`;
+    alerta.innerHTML = `${mensagem} <button type="button" class="btn-close" data-bs-dismiss="alert"></button>`;
+    document.body.appendChild(alerta);
+    setTimeout(() => alerta.remove(), 3000);
+}
+
+
+

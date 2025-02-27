@@ -1,126 +1,187 @@
-/* ==========================
-   ESTILIZAÇÃO DA TABELA DE REUNIÕES
-   ========================== */
+/* ============================= */
+/* ESTILO GERAL */
+/* ============================= */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f8f9fa;
+    margin: 0;
+    padding: 0;
+}
 
-/* Garante que os tamanhos definidos das colunas sejam respeitados */
+/* ============================= */
+/* MENU LATERAL */
+/* ============================= */
+.sidebar {
+    height: 100vh;
+    width: 240px;
+    background-color: #e9ecef;
+    padding: 20px 10px;
+    border-right: 1px solid #ced4da;
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    overflow-y: auto;
+}
+
+.sidebar .logo {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.sidebar .nav-link {
+    color: #212529;
+    font-size: 14px;
+    padding: 10px 15px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+}
+
+.sidebar .nav-link:hover {
+    background-color: #d6d6d6;
+}
+
+.sidebar .nav-link.active {
+    background-color: #007bff;
+    color: #ffffff;
+}
+
+.sidebar .nav-link i {
+    margin-right: 10px;
+    font-size: 1.2rem;
+}
+
+/* ============================= */
+/* CONTEÚDO PRINCIPAL */
+/* ============================= */
+.content-wrapper {
+    margin-left: 240px;
+    padding: 20px;
+    background-color: #ffffff;
+    min-height: 100vh;
+}
+
+.page-title {
+    font-size: 24px;
+    font-weight: bold;
+    color: #343a40;
+    margin-bottom: 20px;
+}
+
+/* ============================= */
+/* ESTILO DA TABELA DE REUNIÕES */
+/* ============================= */
+.table-container {
+    width: 100%;
+    overflow-x: auto; /* Permite rolagem horizontal */
+}
+
+/* Estilização geral da tabela */
 .table {
     width: 100%;
-    table-layout: auto; /* Permite que o conteúdo defina o tamanho */
-    border-collapse: collapse; /* Remove espaços entre células */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra suave */
-    border-radius: 8px; /* Bordas arredondadas */
-    overflow: hidden; /* Esconde bordas arredondadas nas células */
+    border-collapse: collapse;
+    background-color: #fff;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.05);
 }
 
-/* Estilização das células */
-.table th, .table td {
-    padding: 8px 12px;
-    font-size: 14px;
-    text-align: center;
-    border: 1px solid #ddd; /* Bordas sutis para separação */
-    white-space: nowrap; /* Impede quebra de texto em colunas menores */
-}
-
-/* Cabeçalho com tom de cinza claro */
+/* Cabeçalho fixo e estilizado */
 .table thead {
-    background-color: #f2f2f2;
-    color: #333;
-    font-weight: bold;
-    text-transform: uppercase;
+    position: sticky;
+    top: 0;
+    background-color: #007bff;
+    color: #fff;
+    z-index: 10;
 }
 
-/* Ajuste do cabeçalho */
 .table th {
     padding: 12px;
+    text-align: left;
+    font-weight: bold;
+    white-space: nowrap;
     border-bottom: 2px solid #ddd;
 }
 
-/* Estilização das linhas */
-.table tbody tr {
-    background: #ffffff;
-    transition: background 0.2s ease-in-out;
+/* Linhas da tabela */
+.table td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    white-space: nowrap; /* Mantém colunas organizadas */
 }
 
-/* Linhas alternadas */
-.table tbody tr:nth-child(even) {
-    background: #f9f9f9;
-}
-
-/* Hover na linha */
-.table tbody tr:hover {
-    background: #e2e6ea;
-    cursor: pointer;
-}
-
-/* Bordas arredondadas na primeira e última célula da linha */
-.table tbody tr td:first-child {
-    border-radius: 5px 0 0 5px;
-}
-.table tbody tr td:last-child {
-    border-radius: 0 5px 5px 0;
-}
-
-/* Ajuste das colunas para que ocupem somente o espaço do texto */
-.table th:nth-child(1), .table td:nth-child(1) { /* Data */
-    width: min-content;
-    min-width: 50px;
-}
-
-.table th:nth-child(2), .table td:nth-child(2) { /* Hora */
-    width: min-content;
-    min-width: 40px;
-}
-
-.table th:nth-child(3), .table td:nth-child(3) { /* Natureza */
-    width: 100%; /* Ocupa o espaço restante */
-    min-width: 200px;
-    white-space: normal; /* Permite quebra de linha */
+/* Permitir quebra de linha apenas na coluna "Natureza" */
+.table td:nth-child(3), .table th:nth-child(3) {
+    white-space: normal;
     word-wrap: break-word;
-    text-align: left;
+    max-width: 300px; /* Define um limite para evitar que a célula fique grande demais */
 }
 
-.table th:nth-child(4), .table td:nth-child(4) { /* Local */
-    width: min-content;
-    min-width: 80px;
+/* Linhas com efeito hover */
+.table tbody tr:hover {
+    background-color: #f1f1f1;
+    transition: background 0.2s;
 }
 
-.table th:nth-child(5), .table td:nth-child(5) { /* Atendimento */
-    width: min-content;
-    min-width: 80px;
+/* Ajuste para colunas específicas */
+.table td:nth-child(2), /* Hora */
+.table td:nth-child(5), /* Atendimento */
+.table th:nth-child(2),
+.table th:nth-child(5) {
+    text-align: center;
 }
 
-/* Ajuste para responsividade */
+/* Responsividade para telas menores */
 @media (max-width: 768px) {
-    .table thead {
-        display: none;
+    .table {
+        font-size: 12px;
     }
+    .table th, .table td {
+        padding: 8px;
+    }
+}
 
-    .table, .table tbody, .table tr, .table td {
-        display: block;
-        width: 100%;
-    }
+/* ============================= */
+/* BOTÕES E FILTROS */
+/* ============================= */
+.filter-section {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
 
-    .table tr {
-        margin-bottom: 10px;
-        border-radius: 5px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra suave para linhas */
-    }
+.filter-section input {
+    max-width: 160px;
+    text-align: center;
+}
 
-    .table td {
-        text-align: right;
-        padding-left: 50%;
-        position: relative;
-        white-space: normal; /* Permite quebra de linha em telas pequenas */
-    }
+.filter-section button {
+    padding: 6px 12px;
+    font-size: 14px;
+}
 
-    .table td::before {
-        content: attr(data-label);
-        position: absolute;
-        left: 15px;
-        font-weight: bold;
-        text-transform: uppercase;
-        color: #333;
-    }
+/* ============================= */
+/* MODAL */
+/* ============================= */
+.modal-header {
+    background-color: #007bff;
+    color: white;
+}
+
+.modal-footer .btn {
+    font-size: 14px;
+}
+
+/* ============================= */
+/* RODAPÉ */
+/* ============================= */
+footer {
+    text-align: center;
+    padding: 10px;
+    font-size: 14px;
+    color: #6c757d;
+    border-top: 1px solid #ddd;
+    margin-top: 20px;
 }
 
 

@@ -1,46 +1,44 @@
 document.addEventListener('DOMContentLoaded', function () {
-    console.log("Página carregada com sucesso!");
+    console.log("📌 Página carregada com sucesso!");
 
-    // Função para validar o formato da data (dd/mm/yyyy)
+    // ✅ Função para validar se uma data está no formato dd/mm/yyyy
     function validarData(data) {
         const regex = /^\d{2}\/\d{2}\/\d{4}$/;
         return regex.test(data);
     }
 
-    // Função para converter string de data (dd/mm/yyyy) para objeto Date
+    // ✅ Função para converter data (yyyy-mm-dd) para (dd/mm/yyyy)
+    function formatarData(data) {
+        if (!data || typeof data !== 'string') return 'Sem Data';
+
+        if (data.includes('-')) {
+            const [ano, mes, dia] = data.split('-');
+            return `${dia}/${mes}/${ano}`;
+        }
+
+        return data; // Retorna no formato correto se já estiver
+    }
+
+    // ✅ Função para converter string de data (dd/mm/yyyy) para objeto Date
     function converterData(dataString) {
         const [dia, mes, ano] = dataString.split('/');
         return new Date(ano, mes - 1, dia); // Meses no JavaScript começam do índice 0
     }
 
-    // ✅ Função corrigida para formatar corretamente a data no formato dd/mm/yyyy
-    function formatarData(data) {
-    if (!data || typeof data !== 'string') return 'Sem Data';
-
-    // Garante que a data esteja no formato correto
-    const partes = data.split('/');
-    if (partes.length === 3) {
-        return `${partes[0]}/${partes[1]}/${partes[2]}`;
-    }
-
-    return 'Sem Data';
-}
-
-
-    // Função para formatar hora de HH:mm:ss para HH:mm
+    // ✅ Função para formatar hora de HH:mm:ss para HH:mm
     function formatarHora(hora) {
-        if (!hora) return '';
+        if (!hora) return '-';
         const [horas, minutos] = hora.split(':');
         return `${horas}:${minutos}`;
     }
 
-    // Função para aplicar filtro por intervalo de datas
+    // ✅ Função para aplicar filtro por intervalo de datas
     function aplicarFiltro() {
         const dataInicioInput = document.getElementById('dataInicio').value;
         const dataFimInput = document.getElementById('dataFim').value;
 
         if (!validarData(dataInicioInput) || !validarData(dataFimInput)) {
-            alert('Por favor, insira datas válidas no formato dd/mm/yyyy.');
+            alert('⚠️ Por favor, insira datas válidas no formato dd/mm/yyyy.');
             return;
         }
 
@@ -58,7 +56,7 @@ document.addEventListener('DOMContentLoaded', function () {
         tabelas.forEach(tabelaId => {
             const tabela = document.getElementById(tabelaId);
             if (!tabela) {
-                console.warn(`Tabela com ID "${tabelaId}" não encontrada.`);
+                console.warn(`⚠️ Tabela com ID "${tabelaId}" não encontrada.`);
                 return;
             }
 
@@ -79,10 +77,10 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         });
 
-        console.log(`Registros filtrados entre ${dataInicioInput} e ${dataFimInput}.`);
+        console.log(`🔍 Registros filtrados entre ${dataInicioInput} e ${dataFimInput}.`);
     }
 
-    // Configuração do Quill.js
+    // ✅ Configuração do Quill.js para os editores de texto
     const quillConfig = {
         modules: {
             toolbar: [
@@ -97,15 +95,15 @@ document.addEventListener('DOMContentLoaded', function () {
         formats: ['size', 'bold', 'italic', 'underline', 'align', 'list']
     };
 
-    // Texto padrão para os editores
+    // ✅ Textos padrão para os editores
     const textosPadrao = {
         coletas: "Coleta única: Piedade, Construção e Diversos",
         tss: "Araucária - Central: Todos os Sábados<br>Araucária - Thomaz Coelho: Todos os domingos<br>Araucária - Jardim Iguaçu: Todos os domingos",
         avisos: "Araucária - Central: cultos todas as quintas-feiras - 14:00<br>Curitiba - Portão: cultos todas as segundas-feiras - 19:30<br>Araucária - Central: Espaço Infantil todos os sábados - 19:00"
     };
 
-    // Inicializar os editores com texto padrão
-    const editorColetas = new Quill('#editor-coletas', quillConfig);    
+    // ✅ Inicializar os editores de texto
+    const editorColetas = new Quill('#editor-coletas', quillConfig);
     editorColetas.root.innerHTML = textosPadrao.coletas;
 
     const editorTss = new Quill('#editor-tss', quillConfig);
@@ -114,15 +112,15 @@ document.addEventListener('DOMContentLoaded', function () {
     const editorAvisos = new Quill('#editor-avisos', quillConfig);
     editorAvisos.root.innerHTML = textosPadrao.avisos;
 
-    console.log("Editores inicializados com texto padrão.");
+    console.log("✅ Editores inicializados com texto padrão.");
 
-    // Evento de clique no botão de filtro
+    // ✅ Evento de clique no botão de filtro
     const filtrarBtn = document.getElementById('filtrarRegistros');
     if (filtrarBtn) {
         filtrarBtn.addEventListener('click', aplicarFiltro);
     }
 
-    // Aplicar filtro ao pressionar Enter no campo dataFim
+    // ✅ Aplicar filtro ao pressionar Enter no campo dataFim
     const dataFimInput = document.getElementById('dataFim');
     if (dataFimInput) {
         dataFimInput.addEventListener('keypress', function (event) {
@@ -132,44 +130,46 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // Função para carregar dados da tabela Outras Reuniões
-    function carregarOutrasReunioes() {
-        fetch('/outras_reunioes/listar')
-            .then(response => response.json())
-            .then(reunioes => {
-                console.log("Registros recebidos:", reunioes);
-    
-                const tabela = document.getElementById('outrasReunioesTable').querySelector('tbody');
-                tabela.innerHTML = '';
-    
-                if (reunioes.length === 0) {
-                    tabela.innerHTML = '<tr><td colspan="5" class="text-center">Nenhum registro encontrado</td></tr>';
-                    return;
-                }
-    
-                reunioes.forEach(reuniao => {
-                    // Concatenar "tipo" e "obs" para a coluna "natureza"
-                    const natureza = `${reuniao.tipo} - ${reuniao.obs}`.trim().replace(/-\s*$/, '');
+   // ✅ Função para carregar registros da tabela "Outras Reuniões"
+function carregarOutrasReunioes() {
+    fetch('/outras_reunioes/listar')
+        .then(response => response.json())
+        .then(reunioes => {
+            console.log("📌 Registros recebidos da API:", reunioes); // Debug
 
-                    // Formatar a data antes de exibir
-                    const dataFormatada = formatarData(reuniao.data);
+            const tabela = document.getElementById('outrasReunioesTable').querySelector('tbody');
+            tabela.innerHTML = '';
 
-                    const linha = `
-                        <tr>
-                            <td>${dataFormatada}</td>
-                            <td>${reuniao.hora || '-'}</td>
-                            <td>${natureza || '-'}</td>
-                            <td>${reuniao.local || '-'}</td>
-                            <td>${reuniao.atendimento || '-'}</td>
-                        </tr>
-                    `;
-                    tabela.innerHTML += linha;
-                });
-            })
-            .catch(error => console.error('Erro ao carregar outras reuniões:', error));
-    }     
+            if (reunioes.length === 0) {
+                tabela.innerHTML = '<tr><td colspan="5" class="text-center">Nenhum registro encontrado</td></tr>';
+                return;
+            }
 
-    // Carregar os registros de Outras Reuniões ao iniciar
+            reunioes.forEach(reuniao => {
+                // ✅ Formatar a data corretamente antes de exibir
+                const dataFormatada = formatarData(reuniao.data);
+                const horaFormatada = formatarHora(reuniao.hora);
+
+                // ✅ Concatenar "tipo" e "obs" na coluna "Natureza"
+                let natureza = `${reuniao.tipo || ''} - ${reuniao.obs || ''}`.trim();
+                natureza = natureza.replace(/-$/, '').trim(); // Remove traço se não houver "obs"
+
+                const linha = `
+                    <tr>
+                        <td>${dataFormatada}</td>
+                        <td>${horaFormatada}</td>
+                        <td>${natureza || '-'}</td>
+                        <td>${reuniao.local || '-'}</td>
+                        <td>${reuniao.atendimento || '-'}</td>
+                    </tr>
+                `;
+                tabela.innerHTML += linha;
+            });
+        })
+        .catch(error => console.error('❌ Erro ao carregar outras reuniões:', error));
+}
+
+    // ✅ Carregar os registros de Outras Reuniões ao iniciar
     carregarOutrasReunioes();
 });
 

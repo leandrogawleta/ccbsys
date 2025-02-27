@@ -50,21 +50,20 @@ function ordenarReunioes(reunioes) {
     });
 }
 
-// Filtra a tabela conforme o usuário digita
+// ✅ Função para filtrar a tabela conforme o texto digitado
 function filtrarTabela() {
-    const searchValue = this.value.toLowerCase().trim(); // Converte o texto para minúsculas e remove espaços extras
+    const termo = document.getElementById('filtroTabela').value.toLowerCase();
+    const linhas = document.querySelectorAll('#tabela-reunioes tbody tr');
 
-    // Filtra os dados armazenados na variável global `todasReunioes`
-    const resultadosFiltrados = todasReunioes.filter(reuniao => {
-        return Object.values(reuniao).some(value =>
-            value.toString().toLowerCase().includes(searchValue)
-        );
+    linhas.forEach(linha => {
+        const textoLinha = linha.innerText.toLowerCase();
+        linha.style.display = textoLinha.includes(termo) ? '' : 'none';
     });
-
-    // Ordena os resultados filtrados antes de exibir
-    const resultadosOrdenados = ordenarReunioes(resultadosFiltrados);
-    atualizarTabela(resultadosOrdenados);
 }
+
+// ✅ Adiciona o evento de input para filtrar conforme o usuário digita
+document.getElementById('filtroTabela').addEventListener('input', filtrarTabela);
+
 
 // =============================
 // FUNÇÕES PARA CARREGAR A TABELA

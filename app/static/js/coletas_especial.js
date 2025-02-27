@@ -1,153 +1,164 @@
-// Função para formatar a data no formato dd/mm/yyyy
-function formatarData(dataStr) {
-    if (!dataStr || !dataStr.includes('-')) {
-        return 'Data Inválida'; // Trata valores inesperados
-    }
-    const [year, month, day] = dataStr.split('-');
-    return `${day}/${month}/${year}`;
+document.addEventListener('DOMContentLoaded', function () {
+    carregarColetasEspeciais();
+    carregarIgrejas();
+});
+
+// ✅ Função para exibir mensagens de alerta
+function mostrarAlerta(tipo, mensagem) {
+    const alerta = document.createElement('div');
+    alerta.className = `alert alert-${tipo} alert-dismissible fade show position-fixed top-0 end-0 m-3`;
+    alerta.innerHTML = `${mensagem} <button type="button" class="btn-close" data-bs-dismiss="alert"></button>`;
+    document.body.appendChild(alerta);
+    setTimeout(() => alerta.remove(), 3000);
 }
 
-// Função para obter o dia da semana em português
-function obterDiaSemana(dataStr) {
-    if (!dataStr || !dataStr.includes('-')) {
-        return 'Dia Inválido'; // Trata valores inesperados
-    }
-    const [year, month, day] = dataStr.split('-');
-    const data = new Date(year, month - 1, day); // O mês começa em 0
-    const diasSemana = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
-    return diasSemana[data.getDay()] || 'Dia Inválido';
-}
-
-// Função para carregar registros de Coleta Especial e preencher a tabela
-document.addEventListener('DOMContentLoaded', carregarColetasEspeciais);
-
+// ✅ Função para carregar coletas especiais
 function carregarColetasEspeciais() {
+    const tabelaBody = document.getElementById('coletaEspecialTableBody');
+    tabelaBody.innerHTML = '<tr><td colspan="5" class="text-center">Carregando...</td></tr>';
+
     fetch('/coletas_especial/listar')
+        .then(response => response.json())
+        .then(coletas => {
+            tabelaBody.innerHTML = '';
+            if (coletas.length === 0) {
+                tabelaBody.innerHTML = '<tr><td colspan="5" class="text-center">Nenhum registro encontrado</td></tr>';
+                return;
+            }
+            coletas.forEach(coleta => {
+                const row = `<tr>
+                    <td>${coleta.data || '-'}</td>
+                    <td>${coleta.hora || '-'}</td>
+                    <td>${coleta.local || '-'}</td>
+                    <td>${coleta.atendente || '-'}</td>
+                    <td class="text-center">
+                        <button class="btn btn-sm btn-primary" onclick="preencherModalEdicao(${coleta.id})"><i class="bi bi-pencil"></i></button>
+                        <button class="btn btn-sm btn-danger" onclick="excluirColeta(${coleta.id})"><i class="bi bi-trash"></i></button>
+                    </td>
+                </tr>`;
+                tabelaBody.innerHTML += row;
+            });
+        })
+        .catch(error => mostrarAlerta('danger', 'Erro ao carregar coletas especiais!'));
+}
+
+// ✅ Função para preencher o modal de edição
+function preencherModalEdicao(id) {
+    console.log(`Tentando editar coleta ID: ${id}`); // Debug
+
+    fetch(`/coletas_especial/${id}`)
         .then(response => {
             if (!response.ok) {
-                throw new Error('Erro ao carregar coletas especiais');
+                throw new Error(`Erro ao obter dados da coleta ID ${id}`);
             }
             return response.json();
         })
-        .then(coletas => {
-            const tabelaBody = document.querySelector('#coletaEspecialTable tbody');
-            tabelaBody.innerHTML = ''; // Limpa a tabela antes de preenchê-la
+        .then(coleta => {
+            console.log("Coleta carregada:", coleta); // Debug
 
-            if (coletas.length === 0) {
-                tabelaBody.innerHTML = '<tr><td colspan="6" class="text-center">Nenhum registro encontrado</td></tr>';
-                return;
-            }
+            document.getElementById('data').value = coleta.data;
+            document.getElementById('hora').value = coleta.hora;
+            document.getElementById('local').value = coleta.local;
+            document.getElementById('atendente').value = coleta.atendente;
+            document.getElementById('formColetaEspecial').setAttribute('data-id', coleta.id);
 
-            coletas.forEach(coleta => {
-                const dataFormatada = formatarData(coleta.data);
-                const diaSemana = obterDiaSemana(coleta.data);
-
-                const linha = `
-                    <tr>
-                        <td>${dataFormatada}</td>
-                        <td>${diaSemana}</td>
-                        <td>${coleta.hora || '-'}</td>
-                        <td>${coleta.local || '-'}</td>
-                        <td>${coleta.atendente || '-'}</td>
-                        <td class="text-center">
-                            <button class="btn btn-danger btn-sm" onclick="excluirColetaEspecial(${coleta.id})">
-                                <i class="bi bi-trash-fill"></i>
-                            </button>
-                        </td>
-                    </tr>
-                `;
-                tabelaBody.innerHTML += linha;
-            });
+            let modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('modalColetaEspecial'));
+            modal.show();
         })
-        .catch(error => console.error('Erro ao carregar coletas especiais:', error));
+        .catch(error => {
+            console.error("Erro ao carregar coleta para edição:", error);
+            mostrarAlerta('danger', 'Erro ao carregar dados para edição!');
+        });
 }
 
-// Função para salvar Coleta Especial via AJAX
+// ✅ Função para salvar ou atualizar coleta
 document.getElementById('formColetaEspecial').addEventListener('submit', function (event) {
     event.preventDefault();
+    console.log('Botão salvar clicado!'); // Debugging
 
-    const coletaId = document.getElementById('coletaId').value;
+    const form = document.getElementById('formColetaEspecial');
+    const id = form.getAttribute('data-id') || null;
     const data = document.getElementById('data').value;
     const hora = document.getElementById('hora').value;
     const local = document.getElementById('local').value;
     const atendente = document.getElementById('atendente').value;
 
-    const url = coletaId ? `/coletas_especial/${coletaId}/editar` : '/coletas_especial';
-    const method = coletaId ? 'PUT' : 'POST';
+    console.log(`Salvando Coleta - ID: ${id || 'Novo Registro'}`); // Debugging
+
+    if (!data || !hora || !local) {
+        mostrarAlerta('danger', 'Todos os campos obrigatórios devem ser preenchidos.');
+        return;
+    }
+
+    const metodo = id ? 'PUT' : 'POST';
+    const url = id ? `/coletas_especial/${id}/editar` : '/coletas_especial';
 
     fetch(url, {
-        method: method,
+        method: metodo,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            data: data,
-            hora: hora,
-            local: local,
-            atendente: atendente
-        })
+        body: JSON.stringify({ data, hora, local, atendente })
     })
     .then(response => response.json())
     .then(result => {
         if (result.success) {
-            alert('Coleta Especial salva com sucesso!');
-            location.reload();
+            mostrarAlerta('success', id ? 'Coleta atualizada com sucesso!' : 'Coleta cadastrada com sucesso!');
+            form.reset();
+            form.removeAttribute('data-id');
+            carregarColetasEspeciais();
+
+            // Fechamento do modal
+            let modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('modalColetaEspecial'));
+            modal.hide();
         } else {
-            alert('Erro ao salvar Coleta Especial: ' + result.error);
+            mostrarAlerta('danger', result.error || 'Erro ao salvar coleta!');
         }
     })
     .catch(error => {
-        console.error('Erro ao salvar Coleta Especial:', error);
-        alert('Erro ao salvar Coleta Especial.');
+        console.error('Erro na requisição:', error);
+        mostrarAlerta('danger', 'Erro no servidor!');
     });
 });
 
-// Função para excluir Coleta Especial
-function excluirColetaEspecial(id) {
-    if (!confirm('Tem certeza que deseja excluir esta coleta?')) return;
-
-    fetch(`/coletas_especial/${id}/deletar`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' }
-    })
+// ✅ Função para excluir coleta
+function excluirColeta(id) {
+    if (!confirm('Deseja realmente excluir esta coleta?')) return;
+    
+    fetch(`/coletas_especial/${id}/deletar`, { method: 'DELETE' })
     .then(response => response.json())
     .then(result => {
         if (result.success) {
-            alert('Coleta Especial excluída com sucesso!');
-            location.reload();
+            mostrarAlerta('success', 'Coleta excluída com sucesso!');
+            carregarColetasEspeciais();
         } else {
-            alert('Erro ao excluir Coleta Especial: ' + result.error);
+            mostrarAlerta('danger', result.error || 'Erro ao excluir coleta!');
         }
     })
-    .catch(error => {
-        console.error('Erro ao excluir Coleta Especial:', error);
-        alert('Erro ao excluir Coleta Especial.');
-    });
+    .catch(error => mostrarAlerta('danger', 'Erro no servidor!'));
 }
 
-// Função para aplicar filtro por Local ou Atendente
-function aplicarFiltro() {
-    const filtro = document.getElementById('filtro').value;
-    const valorFiltro = document.getElementById('filtroValor').value.toLowerCase();
-
-    const linhas = document.querySelectorAll('#coletaEspecialTable tr');
-    linhas.forEach(linha => {
-        const textoFiltro = linha.querySelector(`td:nth-child(${filtro === 'local' ? 4 : 5})`).textContent.toLowerCase();
-        linha.style.display = textoFiltro.includes(valorFiltro) ? '' : 'none';
-    });
+// ✅ Função para carregar igrejas no dropdown
+function carregarIgrejas() {
+    fetch('/igrejas/listar')
+        .then(response => response.json())
+        .then(igrejas => {
+            const select = document.getElementById('local');
+            select.innerHTML = '<option value="">Selecione</option>';
+            igrejas.forEach(igreja => {
+                const option = document.createElement('option');
+                option.value = igreja.nome;
+                option.textContent = igreja.nome;
+                select.appendChild(option);
+            });
+        })
+        .catch(error => mostrarAlerta('danger', 'Erro ao carregar igrejas!'));
 }
 
-// Adiciona evento ao input de filtro
-document.getElementById('filtroValor').addEventListener('input', aplicarFiltro);
 
 
-function formatarData(dataStr) {
-    const [year, month, day] = dataStr.split('-');
-    return `${day}/${month}/${year}`;
-}
 
-function obterDiaSemana(dataStr) {
-    const [year, month, day] = dataStr.split('-');
-    const data = new Date(year, month - 1, day);
-    const diasSemana = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
-    return diasSemana[data.getDay()];
-}
+
+
+
+
+
 

@@ -2,6 +2,8 @@
 body {
     background-color: #f8f9fa;
     font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
 }
 
 /* Menu Lateral */
@@ -42,6 +44,7 @@ body {
     background-color: #ffffff;
     border-radius: 8px;
     box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
 }
 
 /* Título da Página */
@@ -54,7 +57,7 @@ body {
 
 /* Cards */
 .card {
-    height: 300px; /* Limitar a altura do card */
+    height: 300px;
     background-color: #ffffff;
     border: 1px solid #dee2e6;
     border-radius: 8px;
@@ -72,7 +75,7 @@ body {
 
 /* Barra de Rolagem para a Tabela */
 .card .table-responsive {
-    max-height: 210px; /* Limitar a altura da tabela dentro do card */
+    max-height: 210px;
     overflow-y: auto;
 }
 
@@ -80,10 +83,11 @@ body {
 .table {
     font-size: 12px;
     border-collapse: collapse;
+    width: 100%;
 }
 
 .table th, .table td {
-    padding: 8px;
+    padding: 6px;
     text-align: center;
     border: 1px solid #ddd;
 }
@@ -91,6 +95,7 @@ body {
 .table thead th {
     background-color: #6c757d;
     color: #ffffff;
+    padding: 8px;
 }
 
 /* Corpo da Tabela */
@@ -102,6 +107,66 @@ body {
 
 .table tbody tr:hover {
     background-color: #f8f9fa;
+}
+
+/* Ajustes específicos para a tabela Outras Reuniões */
+#outrasReunioesTable {
+    table-layout: fixed;
+    width: 100%;
+}
+
+#outrasReunioesTable th,
+#outrasReunioesTable td {
+    text-align: center;
+    padding: 6px;
+    font-size: 12px;
+    border: 1px solid #ddd;
+}
+
+/* Ajustes de largura para cada coluna */
+#outrasReunioesTable th:nth-child(1),
+#outrasReunioesTable td:nth-child(1) {
+    width: 12%; /* Data */
+    white-space: nowrap;
+}
+
+#outrasReunioesTable th:nth-child(2),
+#outrasReunioesTable td:nth-child(2) {
+    width: 10%; /* Hora */
+    white-space: nowrap;
+}
+
+#outrasReunioesTable th:nth-child(3),
+#outrasReunioesTable td:nth-child(3) {
+    width: 45%; /* Natureza */
+    word-wrap: break-word;
+    white-space: normal;
+}
+
+#outrasReunioesTable th:nth-child(4),
+#outrasReunioesTable td:nth-child(4) {
+    width: 15%; /* Local */
+    white-space: nowrap;
+}
+
+#outrasReunioesTable th:nth-child(5),
+#outrasReunioesTable td:nth-child(5) {
+    width: 10%; /* Atendimento */
+    white-space: nowrap;
+}
+
+/* Melhorias para responsividade */
+@media (max-width: 768px) {
+    #outrasReunioesTable th,
+    #outrasReunioesTable td {
+        font-size: 11px;
+        padding: 4px;
+    }
+
+    #outrasReunioesTable th:nth-child(3),
+    #outrasReunioesTable td:nth-child(3) {
+        width: 35%;
+    }
 }
 
 /* Botão Pesquisar */
@@ -222,7 +287,7 @@ button.btn-primary i {
     padding: 5px;
     overflow-y: auto;
     font-size: 12px;
-    line-height: 1; /* Remove espaçamento entre linhas */
+    line-height: 1;
     word-wrap: break-word;
 }
 
@@ -233,14 +298,4 @@ button.btn-primary i {
     background-color: #fff;
 }
 
-/* Ajuste dinâmico da altura conforme o conteúdo */
-.ql-editor {
-    min-height: auto !important;
-    max-height: none !important;
-    line-height: 1 !important; /* Remove espaçamento entre linhas */
-    margin: 0 !important;
-    padding: 0 !important;
-    font-size: 12px !important; /* Texto menor para melhor compactação */
-    overflow-wrap: break-word;
-}
 

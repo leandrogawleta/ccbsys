@@ -24,7 +24,7 @@
                 </li>                
                 <li class="nav-item mb-3">
                     <a href="#" class="nav-link active" data-bs-toggle="modal" data-bs-target="#modalOutrasReunioes">
-                        <i class="bi bi-people-fill me-2"></i> Registrar Outras Reuniões
+                        <i class="bi bi-people-fill me-2"></i> Registrar Reunião
                     </a>
                 </li>
             </ul>
@@ -86,30 +86,30 @@
                             <label for="data" class="form-label">Data</label>
                             <input type="text" class="form-control form-control-sm" id="data" name="data" placeholder="dd/mm/yyyy" required>
                         </div>
-                        
-    
+
                         <div class="mb-3">
                             <label for="hora" class="form-label">Hora</label>
                             <input type="time" class="form-control form-control-sm" id="hora" name="hora" required>
                         </div>
-    
+
                         <div class="mb-3">
                             <label for="local" class="form-label">Local</label>
                             <input type="text" class="form-control form-control-sm" id="local" name="local" placeholder="Informe o local" required>
                         </div>
-    
+
                         <div class="mb-3">
                             <label for="atendimento" class="form-label">Atendimento</label>
                             <input type="text" class="form-control form-control-sm" id="atendimento" name="atendimento" placeholder="Informe quem atende">
                         </div>
-    
+
                         <div class="mb-3">
                             <label for="tipo" class="form-label">Tipo</label>
                             <select class="form-select form-select-sm" id="tipo" name="tipo" required>
-                                <!-- Opções preenchidas dinamicamente -->
+                                <option value="">Selecione uma opção</option>
+                                <!-- Opções serão carregadas dinamicamente pelo JavaScript -->
                             </select>
-                        </div>
-    
+                        </div>                        
+
                         <div class="mb-3">
                             <label for="obs" class="form-label">Observações</label>
                             <textarea class="form-control form-control-sm" id="obs" name="obs" placeholder="Adicione observações" rows="3"></textarea>
@@ -124,7 +124,6 @@
             </div>
         </div>
     </div>
-    
 
     <!-- Scripts -->
     <script src="/static/js/outras_reunioes.js"></script>
@@ -143,3 +142,4 @@
     
 </body>
 </html>
+

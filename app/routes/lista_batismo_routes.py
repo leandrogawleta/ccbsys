@@ -202,9 +202,10 @@ def consulta_registros(tipo):
 # 🔹 Função Auxiliar - Outras Reuniões
 # ==========================
 def get_outras_reunioes():
-    """Consulta registros da tabela OutrasReunioes."""
+    """Consulta registros da tabela OutrasReunioes e formata a coluna natureza com Tipo + Observações."""
     try:
         outras_reunioes = db.session.query(
+            OutrasReunioes.id,
             OutrasReunioes.data,
             OutrasReunioes.hora,
             OutrasReunioes.local,
@@ -215,9 +216,10 @@ def get_outras_reunioes():
 
         return [
             {
+                'id': reuniao.id,
                 'data': formatar_data(reuniao.data),
                 'hora': formatar_hora(reuniao.hora),
-                'natureza': f"{reuniao.tipo or ''} - {reuniao.obs or ''}".strip(" - "),
+                'natureza': f"{reuniao.tipo} - {reuniao.obs}" if reuniao.obs else reuniao.tipo,  # Concatena corretamente
                 'local': reuniao.local,
                 'atendimento': reuniao.atendimento
             }
@@ -232,9 +234,10 @@ def get_outras_reunioes():
 # 🔹 Função Auxiliar - Outras Reuniões
 # ==========================
 def get_outras_reunioes():
-    """Consulta registros da tabela OutrasReunioes."""
+    """Consulta registros da tabela OutrasReunioes e formata corretamente a coluna natureza com Tipo + Observações."""
     try:
         outras_reunioes = db.session.query(
+            OutrasReunioes.id,
             OutrasReunioes.data,
             OutrasReunioes.hora,
             OutrasReunioes.local,
@@ -245,9 +248,10 @@ def get_outras_reunioes():
 
         return [
             {
+                'id': reuniao.id,
                 'data': formatar_data(reuniao.data),
                 'hora': formatar_hora(reuniao.hora),
-                'natureza': f"{reuniao.tipo or ''} - {reuniao.obs or ''}".strip(" - "),
+                'natureza': " - ".join(filter(None, [reuniao.tipo, reuniao.obs])),  # Garante que `obs` seja exibido corretamente
                 'local': reuniao.local,
                 'atendimento': reuniao.atendimento
             }
@@ -257,4 +261,5 @@ def get_outras_reunioes():
     except Exception as e:
         current_app.logger.error(f"Erro ao consultar Outras Reuniões: {e}")
         return []
+
 
