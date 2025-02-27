@@ -54,10 +54,11 @@
                     <button class="btn btn-success btn-sm" id="imprimirLista">
                         <i class="bi bi-printer"></i> Imprimir Lista
                     </button>
+                    <a href="/logout" class="btn btn-danger btn-sm ms-2">
+                        <i class="bi bi-box-arrow-right"></i> 
+                    </a>
                 </div>
-                <a href="/logout" class="btn btn-danger btn-sm ms-2">
-                    <i class="bi bi-box-arrow-right"></i> Desconectar
-                </a>
+                
             </header>
         
             <!-- Grupos de Reuniões -->
@@ -144,18 +145,30 @@
 
             <!-- Editores e Anotações -->
             <section class="additional-forms">
+                <!-- Coletas -->
                 <div class="mb-4">
                     <h5 class="card-title">Coletas</h5>
-                    <div id="editor-coletas" class="quill-editor"></div>
+                    <div id="editor-coletas" class="quill-editor">
+                        <p><strong>Fazenda Velha - Central</strong>: Todos os Sábados | <strong>Thomaz Coelho</strong>: Todos os domingos | <strong>Jardim Iguaçu</strong>: Todos os domingos</p>
+                    </div>
                 </div>
+
+                <!-- Cultos com Tradução Simultânea de Sinais -->
                 <div class="mb-4">
                     <h5 class="card-title">Cultos com Tradução Simultânea de Sinais (TSS)</h5>
-                    <div id="editor-tss" class="quill-editor"></div>
+                    <div id="editor-tss" class="quill-editor">
+                        <p><strong>Fazenda Velha - Central</strong>: Todos os Sábados | <strong>Thomaz Coelho</strong>: Todos os domingos | <strong>Jardim Iguaçu</strong>: Todos os domingos</p>
+                    </div>
                 </div>
+
+                <!-- Avisos / Observações -->
                 <div class="mb-4">
                     <h5 class="card-title">Avisos / Observações</h5>
-                    <div id="editor-avisos" class="quill-editor"></div>
+                    <div id="editor-avisos" class="quill-editor">
+                        <p><strong>Fazenda Velha - Central</strong>: cultos todas as quintas-feiras - 14:00 | <strong>Curitiba - Portão</strong>: cultos todas as segundas-feiras - 19:30 | <strong>Fazenda Velha - Central</strong>: Espaço Infantil todos os sábados - 19:00</p>
+                    </div>
                 </div>
+
             </section>
         </div>
     </div>

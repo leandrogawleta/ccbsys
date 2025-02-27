@@ -1,4 +1,6 @@
-/* Estilo Geral */
+/* ============================= */
+/* ESTILO GERAL */
+/* ============================= */
 body {
     background-color: #f8f9fa;
     font-family: 'Arial', sans-serif;
@@ -6,23 +8,30 @@ body {
     padding: 0;
 }
 
-/* Menu Lateral */
+/* ============================= */
+/* MENU LATERAL */
+/* ============================= */
 .sidebar {
     height: 100vh;
-    width: 220px;
+    width: 240px; /* 🔹 Aumentei um pouco o menu lateral */
     background-color: #e9ecef;
     color: #212529;
     padding: 20px 10px;
     border-right: 1px solid #ced4da;
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
 }
 
 .sidebar .nav-link {
     color: #212529;
-    padding: 10px 15px;
+    padding: 12px 18px; /* 🔹 Botões do menu mais espaçosos */
     display: flex;
     align-items: center;
     border-radius: 5px;
-    font-size: 14px;
+    font-size: 16px; /* 🔹 Aumentei a fonte do menu lateral */
+    font-weight: bold;
 }
 
 .sidebar .nav-link:hover {
@@ -36,266 +45,197 @@ body {
 
 .sidebar .nav-link i {
     margin-right: 10px;
-    font-size: 1.2rem;
+    font-size: 1.4rem; /* 🔹 Ícones um pouco maiores */
 }
 
-/* Conteúdo Principal */
+/* ============================= */
+/* CONTEÚDO PRINCIPAL */
+/* ============================= */
 .content-wrapper {
     background-color: #ffffff;
     border-radius: 8px;
     box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
     padding: 20px;
+    margin-left: 260px; /* 🔹 Ajustado devido ao aumento da sidebar */
 }
 
-/* Título da Página */
+/* ============================= */
+/* TÍTULO DA PÁGINA */
+/* ============================= */
 .page-title {
-    font-size: 24px;
+    font-size: 28px;
+    font-weight: bold;
     color: #343a40;
-    margin-bottom: 20px;
     text-align: center;
+    margin-bottom: 15px;
 }
 
-/* Cards */
-.card {
-    height: 300px;
-    background-color: #ffffff;
-    border: 1px solid #dee2e6;
-    border-radius: 8px;
-    box-shadow: 0 0 8px rgba(0, 0, 0, 0.05);
+/* ============================= */
+/* FILTRO E BOTÕES */
+/* ============================= */
+.filter-section {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+    background: #f1f1f1;
     padding: 10px;
-    overflow: hidden;
+    border-radius: 8px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.card-title {
+.filter-section input {
+    width: 160px;
+    text-align: center;
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+    font-size: 16px;
+    padding: 8px;
+}
+
+.filter-section button {
+    padding: 10px 16px;
+    font-size: 16px;
+    border-radius: 5px;
+}
+
+/* 🔹 Ajuste do botão "Desconectar" para mesma altura dos demais */
+.logout-btn {
     font-size: 16px;
     font-weight: bold;
-    margin-bottom: 10px;
-    color: #495057;
+    background-color: #dc3545;
+    color: white;
+    border-radius: 5px;
+    padding: 10px 16px; /* 🔹 Agora tem o mesmo tamanho dos outros botões */
+    border: none;
+    display: flex;
+    align-items: center;
 }
 
-/* Barra de Rolagem para a Tabela */
-.card .table-responsive {
-    max-height: 210px;
+.logout-btn i {
+    margin-right: 8px;
+}
+
+/* 🔹 Ajustes para telas menores */
+@media (max-width: 768px) {
+    .filter-section {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .filter-section input {
+        width: 100%;
+        text-align: center;
+    }
+
+    .filter-section button {
+        width: 100%;
+    }
+
+    .logout-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* ============================= */
+/* ESTILO DAS TABELAS */
+/* ============================= */
+.card {
+    height: 300px; /* 🔹 Aumentei um pouco para mais espaço */
+    display: flex;
+    flex-direction: column;
+}
+
+.card .table-container {
+    flex-grow: 1;
     overflow-y: auto;
+    max-height: 220px; /* 🔹 Mais espaço para a rolagem da tabela */
 }
 
-/* Tabelas */
+/* 🔹 Destaque para o cabeçalho das tabelas */
+.table thead th {
+    background-color: #007bff;
+    color: #ffffff;
+    font-weight: bold;
+    padding: 12px;
+    text-transform: uppercase;
+    font-size: 15px;
+    border-bottom: 2px solid #0056b3;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* 🔹 Estilização das células */
 .table {
-    font-size: 12px;
+    font-size: 14px;
     border-collapse: collapse;
     width: 100%;
 }
 
 .table th, .table td {
-    padding: 6px;
+    padding: 10px;
     text-align: center;
     border: 1px solid #ddd;
 }
 
-.table thead th {
-    background-color: #6c757d;
-    color: #ffffff;
-    padding: 8px;
+/* 🔹 Alternando cores das linhas */
+.table tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
 }
 
-/* Corpo da Tabela */
-.table tbody td {
-    padding: 8px;
-    font-size: 12px;
-    border: 1px solid #ddd;
-}
-
-.table tbody tr:hover {
-    background-color: #f8f9fa;
-}
-
-/* Ajustes específicos para a tabela Outras Reuniões */
-#outrasReunioesTable {
-    table-layout: fixed;
-    width: 100%;
-}
-
-#outrasReunioesTable th,
-#outrasReunioesTable td {
-    text-align: center;
-    padding: 6px;
-    font-size: 12px;
-    border: 1px solid #ddd;
-}
-
-/* Ajustes de largura para cada coluna */
-#outrasReunioesTable th:nth-child(1),
-#outrasReunioesTable td:nth-child(1) {
-    width: 12%; /* Data */
-    white-space: nowrap;
-}
-
-#outrasReunioesTable th:nth-child(2),
-#outrasReunioesTable td:nth-child(2) {
-    width: 10%; /* Hora */
-    white-space: nowrap;
-}
-
-#outrasReunioesTable th:nth-child(3),
-#outrasReunioesTable td:nth-child(3) {
-    width: 45%; /* Natureza */
-    word-wrap: break-word;
-    white-space: normal;
-}
-
-#outrasReunioesTable th:nth-child(4),
-#outrasReunioesTable td:nth-child(4) {
-    width: 15%; /* Local */
-    white-space: nowrap;
-}
-
-#outrasReunioesTable th:nth-child(5),
-#outrasReunioesTable td:nth-child(5) {
-    width: 10%; /* Atendimento */
-    white-space: nowrap;
-}
-
-/* Melhorias para responsividade */
-@media (max-width: 768px) {
-    #outrasReunioesTable th,
-    #outrasReunioesTable td {
-        font-size: 11px;
-        padding: 4px;
-    }
-
-    #outrasReunioesTable th:nth-child(3),
-    #outrasReunioesTable td:nth-child(3) {
-        width: 35%;
-    }
-}
-
-/* Botão Pesquisar */
-button.btn-primary {
-    font-size: 0.9rem;
-    padding: 6px 12px;
-    display: inline-flex;
-    align-items: center;
-}
-
-button.btn-primary i {
-    margin-right: 5px;
-}
-
-/* Modal Pesquisar */
-#modalPesquisar .modal-header {
-    background-color: #007bff;
-    color: #fff;
-}
-
-/* Ajustes Responsivos */
-@media (max-width: 768px) {
-    .content-wrapper {
-        padding: 15px;
-    }
-
-    .filters {
-        flex-direction: column;
-    }
-}
-
-/* Seção de Filtro */
-.filter-section {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.filter-section input[type="text"] {
-    max-width: 150px;
-    text-align: center;
-}
-
-.filter-section button {
-    padding: 6px 12px;
-}
-
-/* Estilo geral para os formulários adicionais */
+/* ============================= */
+/* FORMATANDO OS EDITORES (COLETAS, TSS, AVISOS) */
+/* ============================= */
 .additional-forms {
-    margin-top: 2rem;
+    margin-top: 1.5rem;
     padding: 1rem;
     background-color: #f9f9f9;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.additional-forms h2 {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #333;
-    margin-bottom: 1rem;
-    border-bottom: 2px solid #007bff;
-    padding-bottom: 0.5rem;
+.additional-forms .quill-editor {
+    border: 1px solid #ccc;
+    background-color: #ffffff;
+    font-size: 14px;
+    line-height: 1.1;
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+    min-height: 80px;
 }
 
-.additional-forms .editor-container {
-    margin-bottom: 2rem;
+/* ============================= */
+/* MODAL PESQUISA */
+/* ============================= */
+.modal-header {
+    background-color: #007bff;
+    color: white;
 }
 
-.additional-forms .editor-container label {
-    display: block;
-    font-weight: bold;
-    color: #555;
-    margin-bottom: 0.5rem;
+.modal-footer .btn {
+    font-size: 14px;
 }
 
-.additional-forms .editor-container .ql-container {
-    min-height: 100px;
-    max-height: 300px;
-    overflow-y: auto;
-    border-radius: 4px;
-    border: 1px solid #ddd;
-    background-color: #fff;
+/* ============================= */
+/* RODAPÉ */
+/* ============================= */
+footer {
+    text-align: center;
+    padding: 10px;
+    font-size: 14px;
+    color: #6c757d;
+    border-top: 1px solid #ddd;
+    margin-top: 10px;
 }
 
-.additional-forms .editor-container .ql-toolbar {
-    background-color: #f8f9fa;
-    border-radius: 4px 4px 0 0;
-    border: 1px solid #ddd;
-    border-bottom: none;
-}
 
-/* Botão de salvar */
-.additional-forms .btn {
-    display: inline-block;
-    margin-top: 1rem;
-    font-size: 0.875rem;
-}
 
-/* Ajustes responsivos */
-@media (max-width: 768px) {
-    .additional-forms {
-        padding: 0.75rem;
-    }
 
-    .additional-forms h2 {
-        font-size: 1.25rem;
-    }
-}
 
-/* Editor Quill */
-.quill-editor {
-    min-height: auto;
-    max-height: none;
-    border: 1px solid #ced4da;
-    border-radius: 4px;
-    background-color: #fff;
-    padding: 5px;
-    overflow-y: auto;
-    font-size: 12px;
-    line-height: 1;
-    word-wrap: break-word;
-}
 
-#editor-coletas, #editor-tss, #editor-avisos {
-    border: 1px solid #ced4da;
-    border-radius: 4px;
-    min-height: 100px;
-    background-color: #fff;
-}
+
+
 
 
