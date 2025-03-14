@@ -12,7 +12,8 @@ def create_app():
     app.config['SECRET_KEY'] = '84347900'
 
     # 🔹 Obtém a URL do banco de dados a partir da variável de ambiente
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'postgresql://neondb_owner:npg_Qu3mjEtS2bND@ep-damp-recipe-ac31ipl1-pooler.sa-east-1.aws.neon.tech/neondb?sslmode=require')
+   # app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'postgresql://neondb_owner:npg_Qu3mjEtS2bND@ep-damp-recipe-ac31ipl1-pooler.sa-east-1.aws.neon.tech/neondb?sslmode=require')
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://neondb_owner:npg_Qu3mjEtS2bND@ep-damp-recipe-ac31ipl1-pooler.sa-east-1.aws.neon.tech/neondb?sslmode=require'
 
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
