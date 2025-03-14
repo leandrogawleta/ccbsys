@@ -1,0 +1,20 @@
+14/03/2025
+    Troca do local de hospdagem do banco de dados
+    O projeto estava no render.com junto com o banco de dados, porém o banco de dados no render é pago e em breve poderia parar. Por esse motivo migramos o banco de dados 
+    do render para o https://console.neon.tech/app/projects 
+
+    para acessar o banco de dados pelo pgdadmin4
+
+    Name: NeonDB
+    Server group: NeonDB
+
+    Host name / address: ep-damp-recipe-ac31ipl1-pooler.sa-east-1.aws.neon.tech
+    port: 5432
+    database: neondb
+    username: neondb_owner
+
+    senha:npg_Qu3mjEtS2bND
+    
+
+
+    
